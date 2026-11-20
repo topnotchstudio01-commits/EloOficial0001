@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<!-- ARQUIVO ÚNICO: HTML + CSS + JS. Coloque logo.jpg na mesma pasta deste arquivo. -->
+<!--
+  FOTOS DO SITE — COLOQUE OS ARQUIVOS EM UMA PASTA CHAMADA "fotos"
+  na mesma pasta deste HTML. Depois, troque os caminhos fotos/arquivo.jpg
+  nos dados abaixo pelos nomes reais dos seus arquivos.
+  Exemplos: fotos/integrante-presidente.jpg, fotos/evento-interclasse.jpg,
+  fotos/galeria-interclasse.jpg e fotos/noticia-propostas.jpg.
+  A logo é usada em todos os pontos pelo arquivo logo.jpg.
+-->
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Grêmio Estudantil ELO</title>
+<meta name="description" content="Portal oficial do Grêmio Estudantil ELO — representatividade, participação e transformação dentro da nossa escola.">
+<meta property="og:title" content="Grêmio Estudantil ELO">
+<meta property="og:description" content="Juntos por uma escola ainda melhor.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   GRÊMIO ESTUDANTIL ELO — Design System
+   ============================================================ */
+
+:root{
+  --vinho: #5E010C;
+  --vinho-escuro: #360008;
+  --bege: #C39C77;
+  --dourado: #D6B58A;
+  --creme: #F8EBDD;
+  --branco: #FFFFFF;
+
+  --vinho-10: rgba(94,1,12,.1);
+  --vinho-60: rgba(94,1,12,.6);
+  --vinho-85: rgba(94,1,12,.85);
+  --dourado-30: rgba(214,181,138,.35);
+
+  --text-main: #2A0609;
+  --text-soft: #6b4c45;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+
+  --shadow-sm: 0 2px 10px rgba(54,0,8,.08);
+  --shadow-md: 0 10px 30px rgba(54,0,8,.12);
+  --shadow-lg: 0 24px 60px rgba(54,0,8,.2);
+
+  --header-h: 84px;
+  --container-w: 1240px;
+
+  --ease: cubic-bezier(.22,.8,.3,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+
+body{
+  margin:0;
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background: var(--creme);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; }
+ul{ margin:0; padding:0; list-style:none; }
+h1,h2,h3,h4{ font-family: var(--font-display); margin:0; line-height:1.15; }
+p{ margin:0; }
+
+.container{
+  width:100%;
+  max-width: var(--container-w);
+  margin-inline:auto;
+  padding-inline: clamp(1.1rem, 4vw, 2.5rem);
+}
+
+.skip-link{
+  position:absolute; left:-999px; top:0; background:var(--vinho); color:#fff;
+  padding:.75rem 1.25rem; border-radius: 0 0 10px 0; z-index:999;
+}
+.skip-link:focus{ left:0; }
+
+:focus-visible{
+  outline: 2.5px solid var(--dourado);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+  font-family: var(--font-body); font-weight:700; font-size: .95rem;
+  padding: .85rem 1.5rem; border-radius: 999px; border:none; cursor:pointer;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+  min-height:44px; white-space:nowrap;
+}
+.btn:active{ transform: scale(.97); }
+.btn-primary{ background: var(--creme); color: var(--vinho-escuro); box-shadow: var(--shadow-sm); }
+.btn-primary:hover{ background:#fff; box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.btn-secondary{ background: var(--vinho); color:#fff; }
+.btn-secondary:hover{ background: var(--vinho-escuro); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn-outline{ background:transparent; color:var(--vinho); border:1.5px solid var(--vinho); }
+.btn-outline:hover{ background: var(--vinho); color:#fff; }
+.btn-ghost-gold{ background:transparent; color:var(--dourado); border:1.5px solid var(--dourado-30); }
+.btn-ghost-gold:hover{ background: var(--dourado-30); }
+.btn-sm{ padding:.55rem 1.1rem; font-size:.85rem; min-height:38px; }
+.btn[disabled]{ opacity:.55; cursor:not-allowed; transform:none !important; }
+
+/* ============================================================
+   INTRO
+   ============================================================ */
+#intro{
+  position:fixed; inset:0; z-index:99999;
+  min-height:100svh; padding:24px;
+  background:radial-gradient(circle at 50% 38%, #650b18 0%, #3b0009 62%, #260006 100%);
+  display:flex; align-items:center; justify-content:center;
+  opacity:1; visibility:visible; pointer-events:auto;
+  transition:opacity .65s ease, visibility .65s ease;
+}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.intro-inner{
+  width:min(100%,520px); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:1.35rem;
+  text-align:center; animation:eloIntroEnter 1s cubic-bezier(.2,.75,.25,1) both;
+}
+.intro-logo{
+  width:clamp(104px,24vw,148px)!important;
+  height:clamp(104px,24vw,148px)!important;
+  min-width:clamp(104px,24vw,148px);
+  border-radius:50%; opacity:1; transform:none;
+  box-shadow:0 0 0 9px rgba(195,156,119,.08),0 0 55px rgba(195,156,119,.3);
+  animation:eloIntroLogo 1.1s cubic-bezier(.2,.75,.25,1) both;
+}
+.intro-title{
+  display:flex; flex-direction:column; align-items:center; gap:.35rem;
+  opacity:1; transform:none; animation:eloIntroTitle .8s .25s ease both;
+}
+.intro-title small,.intro-title span{
+  color:#D6B58A; letter-spacing:.22em; font-size:clamp(.62rem,2.5vw,.78rem);
+  font-weight:700; text-transform:uppercase;
+}
+.intro-title strong{
+  color:#fff; font-family:var(--font-display);
+  font-size:clamp(2.6rem,12vw,4.5rem); line-height:1.05; letter-spacing:.06em;
+  text-shadow:0 5px 28px rgba(0,0,0,.28);
+}
+.intro-skip{
+  position:absolute; bottom:max(22px,env(safe-area-inset-bottom));
+  right:max(20px,env(safe-area-inset-right));
+  background:rgba(255,255,255,.04); border:1px solid rgba(214,181,138,.55);
+  color:#D6B58A; padding:.72rem 1.1rem; border-radius:999px;
+  cursor:pointer; font-size:.85rem; opacity:1; animation:eloIntroTitle .7s .55s both;
+}
+.intro-skip:hover{background:rgba(214,181,138,.14);}
+@keyframes eloIntroEnter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes eloIntroLogo{from{opacity:0;transform:scale(.72) rotate(-8deg);filter:blur(8px)}to{opacity:1;transform:scale(1) rotate(0);filter:blur(0)}}
+@keyframes eloIntroTitle{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .intro-inner,.intro-logo,.intro-title,.intro-skip{animation:none!important;opacity:1!important;transform:none!important;filter:none!important;}
+}
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header{
+  position: sticky; top:0; z-index: 500;
+  background: rgba(248,235,221,.72);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid rgba(94,1,12,.08);
+  transition: background .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.site-header.scrolled{
+  background: rgba(248,235,221,.94);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(94,1,12,.12);
+}
+.header-inner{
+  display:flex; align-items:center; gap: clamp(.75rem, 2vw, 1.5rem);
+  height: var(--header-h);
+}
+.brand{ display:flex; align-items:center; gap: .85rem; min-width:0; flex-shrink:1; }
+.brand-logo{ width:46px; height:46px; border-radius:50%; flex-shrink:0; box-shadow: var(--shadow-sm); }
+.brand-divider{ width:1px; height:30px; background: var(--vinho); opacity:.25; display:none; }
+.brand-text{ display:flex; flex-direction:column; line-height:1.1; min-width:0; }
+.brand-text small{ font-size: clamp(.55rem,1.6vw,.68rem); letter-spacing:.14em; color: var(--text-soft); font-weight:700; text-transform:uppercase; white-space:nowrap; }
+.brand-text strong{ font-family: var(--font-display); font-size: clamp(1.25rem, 3vw, 1.7rem); color: var(--vinho); letter-spacing:.02em; }
+
+.main-nav{ display:none; flex:1; justify-content:center; }
+.main-nav ul{ display:flex; gap: clamp(.25rem, 1.6vw, .5rem); }
+.main-nav a{
+  display:inline-flex; align-items:center; padding:.55rem 1rem; border-radius:999px;
+  font-weight:600; font-size:.92rem; color: var(--vinho-escuro); position:relative;
+  transition: background .25s ease, color .25s ease;
+}
+.main-nav a:hover{ background: var(--vinho-10); }
+.main-nav a.active{ background: var(--vinho); color:#fff; }
+
+.btn-participate{ display:none; }
+
+.menu-toggle{
+  margin-left:auto; width:44px; height:44px; border-radius:50%; border:1px solid var(--vinho-10);
+  background: var(--branco); display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0; cursor:pointer; flex-shrink:0; position:relative;
+}
+.menu-toggle span{
+  display:block; position:absolute; width:21px; height:2px; margin:0;
+  background:var(--vinho); border-radius:99px;
+  transition:top .28s ease, transform .28s ease, opacity .2s ease;
+}
+.menu-toggle span:nth-child(1){ top:14px; }
+.menu-toggle span:nth-child(2){ top:20px; }
+.menu-toggle span:nth-child(3){ top:26px; }
+.menu-toggle.open span:nth-child(1){ top:20px; transform:rotate(45deg); }
+.menu-toggle.open span:nth-child(2){ opacity:0; transform:scaleX(.35); }
+.menu-toggle.open span:nth-child(3){ top:20px; transform:rotate(-45deg); }
+.menu-toggle:focus-visible{ outline:3px solid var(--dourado); outline-offset:3px; }
+
+.mobile-nav{
+  position:fixed; inset: var(--header-h) 0 0 0; z-index:400;
+  background: var(--vinho-escuro);
+  transform: translateY(-12px); opacity:0; visibility:hidden;
+  transition: transform .35s var(--ease), opacity .35s var(--ease), visibility .35s var(--ease);
+  overflow-y:auto;
+}
+.mobile-nav.open{ transform:translateY(0); opacity:1; visibility:visible; }
+.mobile-nav ul{ display:flex; flex-direction:column; padding: 1.5rem clamp(1.1rem,4vw,2.5rem); gap:.25rem; }
+.mobile-nav a{
+  display:block; padding:1rem .5rem; font-size:1.15rem; font-weight:600; color: var(--creme);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.mobile-nav a.active{ color: var(--dourado); }
+.mobile-nav .mobile-cta{
+  margin-top:1rem; text-align:center; background: var(--dourado); color: var(--vinho-escuro);
+  border-radius:999px; border:none;
+}
+
+@media (min-width: 1000px){
+  .main-nav{ display:flex; }
+  .brand-divider{ display:block; }
+  .btn-participate{ display:inline-flex; }
+  .menu-toggle{ display:none; }
+}
+
+/* ============================================================
+   SHARED PAGE PATTERNS
+   ============================================================ */
+.page-enter{ animation: pageFade .5s var(--ease); }
+@keyframes pageFade{ from{ opacity:0; transform: translateY(14px); } to{ opacity:1; transform:none; } }
+
+.page-hero{
+  background: linear-gradient(165deg, var(--vinho) 0%, var(--vinho-escuro) 100%);
+  color:#fff; padding: clamp(3rem,8vw,5rem) 0 clamp(2.5rem,6vw,3.5rem);
+  position:relative; overflow:hidden;
+}
+.page-hero::after{
+  content:""; position:absolute; inset:auto -10% -40% -10%; height:60%;
+  background: radial-gradient(ellipse at center, var(--dourado-30), transparent 70%);
+  opacity:.5;
+}
+.page-hero .eyebrow{ color: var(--dourado); letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; font-weight:700; }
+.page-hero h1{ font-size: clamp(2rem, 5vw, 3.2rem); margin-top:.6rem; }
+.page-hero p{ margin-top: .9rem; color: var(--dourado); opacity:.9; max-width:60ch; font-size:1.05rem; }
+.page-hero .crumb{ position:relative; z-index:1; }
+
+.section{ padding: clamp(2.5rem, 6vw, 4.5rem) 0; }
+.section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom: clamp(1.5rem,4vw,2.5rem); flex-wrap:wrap; }
+.section-head h2{ font-size: clamp(1.5rem, 3.4vw, 2.2rem); color: var(--vinho-escuro); display:flex; align-items:center; gap:.7rem; }
+.section-head h2::before{ content:""; width:5px; height: 1.6em; background: var(--vinho); border-radius:3px; display:inline-block; }
+.section-head .see-all{ font-weight:700; color: var(--vinho); white-space:nowrap; display:inline-flex; gap:.4rem; align-items:center; }
+.section-head .see-all:hover{ text-decoration: underline; }
+.section-alt{ background: var(--branco); }
+
+.pill{
+  display:inline-flex; align-items:center; font-size:.72rem; font-weight:700; letter-spacing:.03em;
+  padding:.3rem .75rem; border-radius:999px; text-transform:uppercase;
+}
+.pill-vinho{ background: var(--vinho); color:#fff; }
+.pill-gold{ background: var(--dourado); color: var(--vinho-escuro); }
+.pill-outline{ background: var(--branco); color: var(--vinho); border:1px solid var(--vinho-10); }
+
+.badge-status{ display:inline-flex; align-items:center; gap:.4rem; font-size:.75rem; font-weight:700; padding:.3rem .7rem; border-radius:999px; }
+.badge-planejamento{ background:#eee1d2; color:#7a5a2e; }
+.badge-andamento{ background:#f6dcc2; color:#8a3d0a; }
+.badge-concluido{ background:#dceee0; color:#1f6f3b; }
+.badge-suspenso{ background:#f3dada; color:#9b2c2c; }
+
+/* Reveal-on-scroll (with optional stagger via --stagger index) */
+.reveal{
+  opacity:0; transform: translateY(26px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+  transition-delay: calc(var(--stagger, 0) * 80ms);
+}
+.reveal.in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; transition-delay:0s; } }
+
+/* Fade-up entrance for above-the-fold elements that don't need scroll triggering */
+.fade-in-up{
+  opacity:0; transform: translateY(18px);
+  animation: fadeInUp .7s var(--ease) forwards;
+  animation-delay: calc(var(--stagger, 0) * 90ms);
+}
+@keyframes fadeInUp{ to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce){ .fade-in-up{ animation:none; opacity:1; transform:none; } }
+
+/* Empty / loading states */
+.empty-state{ text-align:center; padding: 3rem 1rem; color: var(--text-soft); }
+.empty-state svg{ margin-bottom: 1rem; opacity:.6; }
+.skeleton{ background: linear-gradient(90deg, #ecdfcf 25%, #f6ebdd 37%, #ecdfcf 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; border-radius: var(--radius-md); }
+@keyframes shimmer{ 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+
+/* ============================================================
+   HOME
+   ============================================================ */
+.hero{
+  position:relative; overflow:hidden;
+  background: linear-gradient(135deg, var(--vinho-escuro) 0%, var(--vinho) 55%, #710212 100%);
+  color:#fff; padding: clamp(3rem,9vw,6rem) 0 clamp(4rem,10vw,7rem);
+}
+.hero-bg-pattern{
+  position:absolute; inset:0; opacity:.14; pointer-events:none;
+  background-image: radial-gradient(circle, var(--dourado) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  animation: driftPattern 40s linear infinite;
+}
+@keyframes driftPattern{ to{ background-position: 280px 140px; } }
+.hero-curve{ position:absolute; left:0; right:0; bottom:-2px; line-height:0; }
+.hero-curve svg{ width:100%; height:auto; display:block; }
+.hero-inner{
+  position:relative; z-index:1; display:grid; gap: clamp(2rem,5vw,3rem);
+  grid-template-columns: 1fr; align-items:center;
+}
+.hero-copy .eyebrow{ color: var(--dourado); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:.78rem; }
+.hero-copy h1{
+  margin-top: .9rem; font-size: clamp(2.1rem, 6vw, 3.6rem); color:#fff;
+  opacity:0; transform:translateY(16px); animation: fadeUp .8s var(--ease) .15s forwards;
+}
+.hero-copy p{
+  margin-top:1.1rem; font-size: clamp(1rem,2.4vw,1.2rem); color: var(--creme); opacity:0; max-width:46ch;
+  animation: fadeUp .8s var(--ease) .35s forwards;
+}
+.hero-copy .hero-ctas{ margin-top: 1.8rem; display:flex; gap: .9rem; flex-wrap:wrap; opacity:0; animation: fadeUp .8s var(--ease) .55s forwards; }
+@keyframes fadeUp{ to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce){ .hero-copy h1,.hero-copy p,.hero-copy .hero-ctas{ opacity:1; transform:none; animation:none; } }
+
+.hero-emblem{ display:flex; justify-content:center; }
+.hero-emblem img{
+  width: clamp(190px, 32vw, 340px); border-radius:50%;
+  box-shadow: 0 30px 70px rgba(0,0,0,.35), 0 0 0 10px rgba(255,255,255,.05);
+  animation: floatSlow 6s ease-in-out infinite;
+}
+@keyframes floatSlow{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-14px);} }
+@media (prefers-reduced-motion: reduce){ .hero-emblem img{ animation:none; } }
+
+@media (min-width: 880px){
+  .hero-inner{ grid-template-columns: 1.15fr .85fr; }
+}
+
+/* Quick links */
+.quick-links{ display:grid; grid-template-columns: repeat(2,1fr); gap: 1rem; margin-top: -3.2rem; position:relative; z-index:2; }
+.quick-card{
+  background:#fff; border-radius: var(--radius-md); padding: 1.4rem 1rem; text-align:center;
+  box-shadow: var(--shadow-md); border: 1px solid rgba(94,1,12,.05);
+  display:flex; flex-direction:column; align-items:center; gap:.65rem;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease);
+  cursor:pointer;
+}
+.quick-links .quick-card:nth-child(1){ --stagger: 0; }
+.quick-links .quick-card:nth-child(2){ --stagger: 1; }
+.quick-links .quick-card:nth-child(3){ --stagger: 2; }
+.quick-links .quick-card:nth-child(4){ --stagger: 3; }
+.quick-links .quick-card:nth-child(5){ --stagger: 4; }
+.quick-card:hover, .quick-card:focus-visible{ transform: translateY(-6px); box-shadow: var(--shadow-lg); background: var(--vinho); color:#fff; }
+.quick-card:hover .quick-icon, .quick-card:focus-visible .quick-icon{ background: var(--dourado); color: var(--vinho-escuro); }
+.quick-icon{
+  width:52px; height:52px; border-radius:50%; background: var(--creme); color: var(--vinho);
+  display:flex; align-items:center; justify-content:center; transition: background .3s ease, color .3s ease;
+}
+.quick-card span{ font-weight:700; font-size: clamp(.82rem,2vw,.95rem); }
+@media (min-width: 720px){ .quick-links{ grid-template-columns: repeat(5,1fr); } }
+
+/* News grid */
+.news-grid{ display:grid; grid-template-columns: 1fr; gap: 1.5rem; }
+@media (min-width: 720px){ .news-grid{ grid-template-columns: repeat(3,1fr); } }
+.card{
+  background:#fff; border-radius: var(--radius-md); overflow:hidden; box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(94,1,12,.06); display:flex; flex-direction:column;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.card:hover{ transform: translateY(-5px); box-shadow: var(--shadow-md); }
+.card-media{ position:relative; aspect-ratio: 16/10; overflow:hidden; background: var(--bege); }
+.card-media img{ width:100%; height:100%; object-fit:cover; transition: transform .5s var(--ease); }
+.card:hover .card-media img{ transform: scale(1.08); }
+.card-media .pill{ position:absolute; top:.8rem; left:.8rem; }
+.card-body{ padding: 1.2rem 1.3rem 1.4rem; display:flex; flex-direction:column; gap:.6rem; flex:1; }
+.card-body h3{ font-size: 1.15rem; color: var(--vinho-escuro); }
+.card-body p{ color: var(--text-soft); font-size:.92rem; line-height:1.5; }
+.card-meta{ display:flex; align-items:center; gap:.4rem; color: var(--text-soft); font-size:.8rem; }
+.card-footer-link{ margin-top:auto; display:inline-flex; align-items:center; gap:.4rem; font-weight:700; color: var(--vinho); padding-top:.4rem; }
+.card-footer-link svg{ transition: transform .25s ease; }
+.card:hover .card-footer-link svg{ transform: translateX(4px); }
+
+/* two-col home section (news + events) */
+.home-split{ display:grid; grid-template-columns:1fr; gap: 2.5rem; align-items:start; }
+@media (min-width: 980px){ .home-split{ grid-template-columns: 2fr 1fr; } }
+
+.events-panel{ background: var(--vinho-escuro); color:#fff; border-radius: var(--radius-lg); padding: 1.6rem; box-shadow: var(--shadow-md); }
+.events-panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.1rem; }
+.events-panel-head h3{ color:#fff; font-size:1.25rem; }
+.events-panel-head a{ color: var(--dourado); font-weight:700; font-size:.85rem; }
+.event-row{ display:flex; gap:1rem; padding: .9rem 0; border-top: 1px solid rgba(255,255,255,.1); align-items:flex-start; }
+.event-row:first-of-type{ border-top:none; }
+.event-date{
+  flex-shrink:0; width:52px; height:52px; border-radius: 12px; background: var(--dourado); color: var(--vinho-escuro);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:800; line-height:1.05;
+}
+.event-date small{ font-size:.6rem; letter-spacing:.05em; text-transform:uppercase; font-weight:700; }
+.event-date strong{ font-size:1.15rem; }
+.event-info strong{ display:block; font-size:.98rem; }
+.event-info span{ display:block; color: var(--creme); opacity:.8; font-size:.82rem; margin-top:.15rem; }
+
+/* Participate band */
+.participate-band{
+  background: linear-gradient(120deg, var(--bege), var(--dourado));
+  border-radius: var(--radius-lg); padding: clamp(1.6rem,4vw,2.6rem);
+  display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;
+  position:relative; overflow:hidden; color: var(--vinho-escuro);
+}
+.participate-band::before{
+  content:""; position:absolute; right:-40px; top:-40px; width:180px; height:180px; border-radius:50%;
+  background: rgba(255,255,255,.25);
+}
+.participate-copy{ display:flex; align-items:center; gap:1.1rem; position:relative; z-index:1; }
+.participate-copy .icon-badge{ width:56px; height:56px; border-radius:50%; background: var(--vinho); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.participate-copy h2{ font-size: clamp(1.3rem,3vw,1.7rem); }
+.participate-copy p{ margin-top:.3rem; font-weight:500; }
+.participate-band .btn{ position:relative; z-index:1; }
+
+/* Gallery preview strip */
+.gallery-strip{ position:relative; }
+.gallery-track{ display:flex; gap: 1rem; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:.5rem; scrollbar-width:none; }
+.gallery-track::-webkit-scrollbar{ display:none; }
+.gallery-thumb{
+  scroll-snap-align:start; flex: 0 0 clamp(200px,42vw,280px); aspect-ratio: 4/3; border-radius: var(--radius-md);
+  overflow:hidden; position:relative; cursor:pointer; box-shadow: var(--shadow-sm);
+}
+.gallery-thumb img{ width:100%; height:100%; object-fit:cover; transition: transform .4s var(--ease); }
+.gallery-thumb:hover img{ transform: scale(1.1); }
+.gallery-strip-nav{ display:flex; gap:.6rem; justify-content:flex-end; margin-top:1rem; }
+.gallery-strip-nav button{
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--vinho-10); background:#fff; color:var(--vinho);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.gallery-strip-nav button:hover{ background: var(--vinho); color:#fff; }
+
+/* ============================================================
+   INTEGRANTES
+   ============================================================ */
+.filter-bar{ display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom: 2rem; }
+.filter-chip{
+  padding:.55rem 1.1rem; border-radius:999px; border:1.5px solid var(--vinho-10); background:#fff;
+  font-weight:600; font-size:.85rem; cursor:pointer; color: var(--vinho-escuro); transition: all .25s ease;
+}
+.filter-chip:hover{ border-color: var(--vinho); }
+.filter-chip.active{ background: var(--vinho); color:#fff; border-color: var(--vinho); }
+
+.members-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap: 1.4rem; }
+@media (min-width:640px){ .members-grid{ grid-template-columns: repeat(3,1fr); } }
+@media (min-width:980px){ .members-grid{ grid-template-columns: repeat(4,1fr); } }
+.member-card{ background:#fff; border-radius: var(--radius-md); overflow:hidden; text-align:center; box-shadow: var(--shadow-sm); transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+.member-card:hover{ transform: translateY(-6px); box-shadow: var(--shadow-md); }
+.member-photo{ aspect-ratio:1; background: linear-gradient(145deg,var(--bege),var(--dourado)); display:flex; align-items:center; justify-content:center; color: var(--vinho-escuro); position:relative; }
+.member-photo svg{ width:42%; height:42%; opacity:.75; }
+.member-photo .demo-tag{ position:absolute; bottom:.5rem; left:50%; transform:translateX(-50%); font-size:.6rem; }
+.member-info{ padding: 1rem .8rem 1.3rem; }
+.member-info strong{ display:block; font-size:.98rem; color: var(--vinho-escuro); }
+.member-info .role{ color: var(--vinho); font-weight:700; font-size:.78rem; margin-top:.2rem; display:block; }
+.member-info .desc{ color: var(--text-soft); font-size:.8rem; margin-top:.5rem; line-height:1.4; }
+
+.section-note{
+  background: var(--vinho-10); border: 1px dashed rgba(94,1,12,.25); border-radius: var(--radius-sm);
+  padding: .9rem 1.1rem; font-size:.85rem; color: var(--vinho-escuro); margin-bottom: 1.8rem; display:flex; gap:.6rem; align-items:flex-start;
+}
+.section-note svg{ flex-shrink:0; margin-top:.1rem; }
+
+/* ============================================================
+   NOTÍCIAS
+   ============================================================ */
+.news-toolbar{ display:flex; flex-wrap:wrap; gap:1rem; justify-content:space-between; margin-bottom: 2rem; align-items:center; }
+.search-input{ position:relative; flex:1; min-width:220px; max-width:360px; }
+.search-input input{
+  width:100%; padding:.8rem 1rem .8rem 2.6rem; border-radius:999px; border:1.5px solid var(--vinho-10);
+  font-size:.92rem; background:#fff;
+}
+.search-input svg{ position:absolute; left:.9rem; top:50%; transform:translateY(-50%); color: var(--text-soft); }
+.search-input input:focus{ border-color: var(--vinho); }
+
+.article-layout{ display:grid; grid-template-columns:1fr; gap: 2.5rem; }
+@media (min-width: 980px){ .article-layout{ grid-template-columns: 2fr 1fr; } }
+.article-hero-img{ aspect-ratio: 16/9; border-radius: var(--radius-lg); overflow:hidden; margin-bottom: 1.8rem; box-shadow: var(--shadow-md); }
+.article-hero-img img{ width:100%; height:100%; object-fit:cover; }
+.article-body h1{ font-size: clamp(1.7rem,4vw,2.6rem); color: var(--vinho-escuro); }
+.article-body .article-meta{ display:flex; gap:1rem; flex-wrap:wrap; color: var(--text-soft); font-size:.88rem; margin: .8rem 0 1.6rem; align-items:center; }
+.article-body .prose{ display:flex; flex-direction:column; gap:1.1rem; font-size:1.02rem; line-height:1.75; color:#3a1a1a; }
+.article-share{ display:flex; gap:.6rem; margin-top: 2rem; align-items:center; flex-wrap:wrap; }
+.article-share button{
+  width:42px; height:42px; border-radius:50%; border:1.5px solid var(--vinho-10); background:#fff; color: var(--vinho);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.article-share button:hover{ background: var(--vinho); color:#fff; }
+.back-link{ display:inline-flex; align-items:center; gap:.4rem; font-weight:700; color: var(--vinho); margin-bottom: 1.5rem; }
+.back-link:hover{ text-decoration:underline; }
+.sidebar-box{ background:#fff; border-radius: var(--radius-md); padding: 1.4rem; box-shadow: var(--shadow-sm); margin-bottom: 1.5rem; }
+.sidebar-box h4{ font-size:1rem; color: var(--vinho-escuro); margin-bottom: 1rem; }
+.sidebar-related{ display:flex; gap:.8rem; padding: .7rem 0; border-top:1px solid var(--vinho-10); }
+.sidebar-related:first-of-type{ border-top:none; }
+.sidebar-related img{ width:56px; height:56px; border-radius: 10px; object-fit:cover; flex-shrink:0; }
+.sidebar-related strong{ font-size:.85rem; line-height:1.3; display:block; color: var(--vinho-escuro); }
+
+/* Pagination */
+.pagination{ display:flex; justify-content:center; gap:.5rem; margin-top: 2.5rem; }
+.pagination button{
+  width:40px; height:40px; border-radius:50%; border:1.5px solid var(--vinho-10); background:#fff; font-weight:700; cursor:pointer;
+}
+.pagination button.active{ background: var(--vinho); color:#fff; border-color: var(--vinho); }
+.pagination button:hover:not(.active){ border-color: var(--vinho); }
+
+/* ============================================================
+   PROPOSTAS
+   ============================================================ */
+.proposals-grid{ display:grid; grid-template-columns: 1fr; gap: 1.4rem; }
+@media (min-width: 760px){ .proposals-grid{ grid-template-columns: repeat(2,1fr); } }
+.proposal-card{ background:#fff; border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); border:1px solid rgba(94,1,12,.06); display:flex; flex-direction:column; gap: .8rem; }
+.proposal-top{ display:flex; justify-content:space-between; gap:.6rem; align-items:flex-start; }
+.proposal-card h3{ font-size: 1.1rem; color: var(--vinho-escuro); }
+.proposal-card p{ color: var(--text-soft); font-size:.9rem; line-height:1.5; }
+.proposal-meta{ display:flex; gap:1rem; font-size:.78rem; color: var(--text-soft); flex-wrap:wrap; }
+.progress-track{ height:8px; border-radius:999px; background: var(--vinho-10); overflow:hidden; margin-top:.3rem; }
+.progress-fill{ height:100%; background: linear-gradient(90deg,var(--bege),var(--vinho)); border-radius:999px; transition: width 1s var(--ease); }
+.progress-label{ display:flex; justify-content:space-between; font-size:.75rem; color: var(--text-soft); margin-top:.3rem; }
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+.events-layout{ display:grid; grid-template-columns:1fr; gap: 2rem; }
+@media (min-width: 980px){ .events-layout{ grid-template-columns: 1.4fr .9fr; } }
+.events-list .month-label{ font-family: var(--font-display); color: var(--vinho); font-size:1.2rem; margin: 1.8rem 0 .9rem; }
+.events-list .month-label:first-child{ margin-top:0; }
+.event-card{
+  display:flex; gap:1.2rem; background:#fff; border-radius: var(--radius-md); padding:1.1rem; box-shadow: var(--shadow-sm);
+  margin-bottom: 1rem; align-items:flex-start; border: 1px solid rgba(94,1,12,.06);
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+.event-card:hover{ box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.event-card .event-date{ background: var(--vinho); color:#fff; }
+.event-card-body{ flex:1; min-width:0; }
+.event-card-body h3{ font-size:1.05rem; color: var(--vinho-escuro); }
+.event-card-body p{ color: var(--text-soft); font-size:.88rem; margin-top:.3rem; }
+.event-card-tags{ display:flex; gap:.5rem; margin-top:.6rem; flex-wrap:wrap; }
+.event-card-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:.8rem; flex-wrap:wrap; gap:.5rem; }
+
+.mini-cal{ background:#fff; border-radius: var(--radius-md); padding:1.4rem; box-shadow: var(--shadow-sm); }
+.mini-cal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.mini-cal-head button{ width:32px; height:32px; border-radius:50%; border:1px solid var(--vinho-10); background:#fff; cursor:pointer; }
+.mini-cal-grid{ display:grid; grid-template-columns: repeat(7,1fr); gap:4px; text-align:center; font-size:.78rem; }
+.mini-cal-grid .dow{ color: var(--text-soft); font-weight:700; padding-bottom:.3rem; }
+.mini-cal-grid .day{ aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:default; }
+.mini-cal-grid .day.has-event{ background: var(--vinho-10); color: var(--vinho); font-weight:700; cursor:pointer; }
+.mini-cal-grid .day.has-event:hover{ background: var(--vinho); color:#fff; }
+.mini-cal-grid .day.muted{ opacity:.3; }
+
+/* ============================================================
+   GALERIA
+   ============================================================ */
+.masonry{ columns: 2 220px; column-gap: 1rem; }
+@media (min-width:720px){ .masonry{ columns: 3 240px; } }
+@media (min-width:1100px){ .masonry{ columns: 4 240px; } }
+.masonry-item{
+  break-inside: avoid; margin-bottom: 1rem; border-radius: var(--radius-md); overflow:hidden; position:relative;
+  cursor:pointer; box-shadow: var(--shadow-sm);
+}
+.masonry-item img{ width:100%; display:block; transition: transform .4s var(--ease); }
+.masonry-item:hover img{ transform: scale(1.08); }
+.masonry-overlay{
+  position:absolute; inset:0; background: linear-gradient(0deg, rgba(54,0,8,.85), transparent 55%);
+  display:flex; align-items:flex-end; padding: .8rem; opacity:0; transition: opacity .3s ease;
+}
+.masonry-item:hover .masonry-overlay{ opacity:1; }
+.masonry-overlay span{ color:#fff; font-weight:700; font-size:.85rem; }
+
+.lightbox{
+  position:fixed; inset:0; background: rgba(15,0,3,.92); z-index:3000; display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition: opacity .3s ease, visibility .3s ease; padding: 2rem 1rem;
+}
+.lightbox.open{ opacity:1; visibility:visible; }
+.lightbox-content{ max-width: min(900px,92vw); max-height: 86vh; display:flex; flex-direction:column; align-items:center; gap:.8rem; }
+.lightbox img{ max-height: 70vh; max-width:100%; border-radius: var(--radius-sm); object-fit:contain; }
+.lightbox-caption{ color:#fff; text-align:center; font-size:.9rem; opacity:.85; }
+.lightbox-close, .lightbox-nav{
+  position:fixed; background: rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:50%;
+  width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.lightbox-close{ top: 1.5rem; right: 1.5rem; }
+.lightbox-nav:hover,.lightbox-close:hover{ background: rgba(255,255,255,.22); }
+.lightbox-prev{ top:50%; left: 1rem; transform: translateY(-50%); }
+.lightbox-next{ top:50%; right: 1rem; transform: translateY(-50%); }
+
+/* ============================================================
+   PARTICIPAR / FORMS
+   ============================================================ */
+.form-card{ background:#fff; border-radius: var(--radius-lg); padding: clamp(1.5rem,4vw,2.5rem); box-shadow: var(--shadow-md); max-width:760px; margin-inline:auto; }
+.form-grid{ display:grid; grid-template-columns:1fr; gap: 1.1rem; margin-top: 1.5rem; }
+@media (min-width:620px){ .form-grid.two-col{ grid-template-columns:1fr 1fr; } }
+.field{ display:flex; flex-direction:column; gap:.4rem; }
+.field label{ font-weight:700; font-size:.85rem; color: var(--vinho-escuro); }
+.field .req{ color:var(--vinho); }
+.field input, .field select, .field textarea{
+  padding: .85rem 1rem; border-radius: var(--radius-sm); border: 1.5px solid var(--vinho-10); font-size:.95rem;
+  font-family:inherit; background: var(--creme); color: var(--text-main); min-height:48px;
+}
+.field textarea{ min-height:120px; resize:vertical; }
+.field input:focus,.field select:focus,.field textarea:focus{ border-color: var(--vinho); background:#fff; }
+.field .hint{ font-size:.78rem; color: var(--text-soft); }
+.field .error{ font-size:.78rem; color:#9b2c2c; display:none; }
+.field.invalid input,.field.invalid select,.field.invalid textarea{ border-color:#9b2c2c; }
+.field.invalid .error{ display:block; }
+.form-actions{ margin-top: 1.8rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
+.form-success{
+  display:none; text-align:center; padding: 2.5rem 1rem;
+}
+.form-success.show{ display:block; }
+.form-success svg{ color:#1f6f3b; margin-bottom:1rem; }
+.form-success h3{ color: var(--vinho-escuro); margin-bottom:.5rem; }
+.form-success p{ color: var(--text-soft); max-width:50ch; margin-inline:auto; }
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+.admin-shell{ background: var(--vinho-escuro); min-height: 70vh; }
+.admin-login{ max-width: 420px; margin: 0 auto; background:#fff; border-radius: var(--radius-lg); padding: 2.2rem; box-shadow: var(--shadow-lg); }
+.admin-login h2{ color: var(--vinho-escuro); text-align:center; }
+.admin-login p.sub{ text-align:center; color: var(--text-soft); font-size:.88rem; margin: .5rem 0 1.5rem; }
+.admin-layout{ display:grid; grid-template-columns: 1fr; gap: 1.5rem; }
+@media (min-width: 900px){ .admin-layout{ grid-template-columns: 220px 1fr; } }
+.admin-side{ background: rgba(255,255,255,.06); border-radius: var(--radius-md); padding: 1rem; height:fit-content; }
+.admin-side button{
+  display:flex; align-items:center; gap:.6rem; width:100%; text-align:left; background:transparent; border:none; color: var(--creme);
+  padding: .75rem .8rem; border-radius: var(--radius-sm); cursor:pointer; font-weight:600; font-size:.9rem;
+}
+.admin-side button.active, .admin-side button:hover{ background: var(--dourado); color: var(--vinho-escuro); }
+.admin-panel{ background:#fff; border-radius: var(--radius-md); padding: 1.5rem; }
+.admin-panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:.8rem; }
+.admin-panel-head h3{ color: var(--vinho-escuro); }
+.admin-table{ width:100%; border-collapse:collapse; font-size:.88rem; }
+.admin-table th{ text-align:left; color: var(--text-soft); font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; padding:.6rem; border-bottom: 2px solid var(--vinho-10); }
+.admin-table td{ padding:.7rem .6rem; border-bottom: 1px solid var(--vinho-10); vertical-align:middle; }
+.admin-table tr:hover td{ background: var(--creme); }
+.admin-row-actions{ display:flex; gap:.4rem; }
+.icon-btn{ width:34px; height:34px; border-radius:8px; border:1px solid var(--vinho-10); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; color: var(--vinho); }
+.icon-btn:hover{ background: var(--vinho); color:#fff; }
+.icon-btn.danger:hover{ background:#9b2c2c; }
+.admin-logout{ margin-left:auto; }
+.demo-banner{
+  background: var(--dourado-30); border: 1px dashed var(--dourado); color: var(--vinho-escuro);
+  border-radius: var(--radius-sm); padding: 1rem 1.2rem; font-size:.85rem; margin-bottom: 1.5rem; display:flex; gap:.7rem;
+}
+
+/* Modal (admin edit) */
+.modal-backdrop{ position:fixed; inset:0; background: rgba(42,6,9,.55); z-index:2000; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; visibility:hidden; transition: opacity .25s ease, visibility .25s ease; }
+.modal-backdrop.open{ opacity:1; visibility:visible; }
+.modal{ background:#fff; border-radius: var(--radius-lg); max-width: 560px; width:100%; max-height: 88vh; overflow-y:auto; padding: 1.8rem; box-shadow: var(--shadow-lg); }
+.modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; }
+.modal-head h3{ color: var(--vinho-escuro); }
+.modal-close{ width:36px; height:36px; border-radius:50%; border:none; background: var(--creme); cursor:pointer; }
+
+/* 404 */
+.not-found{ text-align:center; padding: 5rem 1rem; }
+.not-found h1{ font-size: clamp(3rem,10vw,6rem); color: var(--vinho); }
+
+/* Toast */
+.toast-root{ position:fixed; bottom: 1.5rem; left:50%; transform:translateX(-50%); z-index:5000; display:flex; flex-direction:column; gap:.6rem; width:min(92vw,420px); }
+.toast{
+  background: var(--vinho-escuro); color:#fff; padding: .9rem 1.2rem; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+  display:flex; align-items:center; gap:.6rem; font-size:.88rem; animation: toastIn .3s var(--ease);
+}
+.toast.error{ background:#7a1d1d; }
+@keyframes toastIn{ from{ opacity:0; transform: translateY(14px);} }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer{ background: var(--vinho-escuro); color: var(--creme); margin-top: 2rem; position:relative; overflow:hidden; }
+.site-footer::before{
+  content:""; position:absolute; top:-1px; left:0; right:0; height:40px;
+  background: var(--creme);
+  -webkit-mask: radial-gradient(60px 24px at 50% 0, transparent 98%, #000 100%) repeat-x; mask: radial-gradient(60px 24px at 50% 0, transparent 98%, #000 100%) repeat-x;
+  display:none;
+}
+.footer-top{
+  display:grid; grid-template-columns: 1fr; gap: 2.4rem;
+  padding: clamp(2.5rem,6vw,3.5rem) 0 2rem;
+  text-align:center; justify-items:center;
+}
+.footer-brand{ display:flex; align-items:center; gap:1rem; text-align:left; }
+.footer-logo{ width:54px; height:54px; border-radius:50%; flex-shrink:0; }
+.footer-brand strong{ font-family: var(--font-display); font-size:1.2rem; color:#fff; display:block; }
+.footer-brand p{ font-size:.85rem; opacity:.75; margin-top:.2rem; font-style:italic; }
+
+.footer-links{ display:flex; flex-wrap:wrap; justify-content:center; gap: .7rem 1.4rem; width:100%; max-width: 420px; }
+
+.footer-social{ display:flex; flex-direction:column; align-items:center; }
+.footer-social span{ display:block; font-size:.8rem; opacity:.7; margin-bottom:.7rem; }
+.social-icons{ display:flex; gap:.6rem; }
+.social-icons a{ width:40px; height:40px; border-radius:50%; background: rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; transition: background .2s ease, transform .2s ease; flex-shrink:0; }
+.social-icons a:hover{ background: var(--dourado); color: var(--vinho-escuro); transform: translateY(-3px); }
+
+.footer-newsletter{ width:100%; max-width: 360px; }
+.footer-newsletter label{ font-size:.8rem; opacity:.7; display:block; margin-bottom:.6rem; }
+.newsletter-row{ display:flex; gap:.5rem; width:100%; }
+.newsletter-row input{
+  flex:1; min-width:0; padding:.8rem 1rem; border-radius:999px; border:1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.08); color:#fff; font-size:.88rem;
+}
+.newsletter-row input::placeholder{ color: rgba(255,255,255,.5); }
+.newsletter-row .btn{ flex-shrink:0; }
+.newsletter-msg{ font-size:.78rem; margin-top:.5rem; color: var(--dourado); min-height:1.2em; }
+
+.footer-brand.reveal{ --stagger: 0; }
+.footer-links.reveal{ --stagger: 1; }
+.footer-social.reveal{ --stagger: 2; }
+.footer-newsletter.reveal{ --stagger: 3; }
+
+@media (min-width: 600px){
+  .footer-top{ grid-template-columns: 1fr 1fr; text-align:left; justify-items:start; }
+  .footer-links{ justify-content:flex-start; }
+  .footer-social{ align-items:flex-start; }
+  .footer-newsletter{ max-width:100%; }
+}
+@media (min-width: 880px){
+  .footer-top{ grid-template-columns: 1.15fr 1fr .65fr 1.1fr; align-items:start; gap: 2rem; }
+}
+
+.footer-bottom{
+  border-top: 1px solid rgba(255,255,255,.1); padding: 1.2rem 0 2rem; display:flex; justify-content:center;
+  align-items:center; gap: .6rem 1.5rem; flex-wrap:wrap; font-size:.78rem; opacity:.75; text-align:center;
+}
+.footer-admin-link{ opacity:.6; text-decoration:underline; white-space:nowrap; }
+.footer-admin-link:hover{ opacity:1; }
+@media (min-width: 600px){
+  .footer-bottom{ justify-content:space-between; text-align:left; }
+}
+
+/* Utility */
+.visually-hidden{ position:absolute; width:1px;height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+.center-text{ text-align:center; }
+.mt-lg{ margin-top: 2rem; }
+
+
+/* ============================================================
+   EFEITOS EXTRAS + ESPAÇOS RESERVADOS PARA A LOGO
+   Para inserir sua logo: substitua o conteúdo dos elementos
+   .logo-placeholder por uma imagem <img src="SUA-LOGO.png">.
+   ============================================================ */
+.logo-placeholder{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  color:var(--vinho); background:linear-gradient(135deg,rgba(195,156,119,.22),rgba(94,1,12,.08));
+  border:1.5px dashed rgba(94,1,12,.48); border-radius:50%;
+  font-size:.58rem; font-weight:800; letter-spacing:.12em; text-align:center;
+  box-shadow:0 8px 24px rgba(46,0,8,.12), inset 0 0 0 5px rgba(255,255,255,.22);
+}
+.intro-logo.logo-placeholder{
+  width:clamp(90px,20vw,140px); height:clamp(90px,20vw,140px);
+  color:var(--dourado); background:radial-gradient(circle,rgba(195,156,119,.2),rgba(94,1,12,.35));
+  border-color:rgba(195,156,119,.72); font-size:.72rem;
+}
+.brand-logo.logo-placeholder{width:46px;height:46px;font-size:.48rem;}
+.footer-logo.logo-placeholder{width:54px;height:54px;color:var(--creme);border-color:rgba(195,156,119,.65);font-size:.48rem;}
+.hero-emblem .logo-placeholder{
+  width:clamp(190px,32vw,340px); aspect-ratio:1; height:auto;
+  color:var(--creme); font-size:clamp(.8rem,2vw,1.1rem);
+  border:2px dashed rgba(248,235,221,.72);
+  background:
+    radial-gradient(circle at 50% 45%,rgba(195,156,119,.28),transparent 58%),
+    linear-gradient(145deg,#5E010C,#300006);
+  box-shadow:0 30px 70px rgba(0,0,0,.35),0 0 0 10px rgba(255,255,255,.05),0 0 55px rgba(195,156,119,.18);
+}
+
+/* Movimento mais expressivo, mantendo as cores e a estrutura originais. */
+html{scroll-behavior:smooth;}
+.site-header{transition:background .35s ease,box-shadow .35s ease,backdrop-filter .35s ease;}
+.brand-logo,.footer-logo{transition:transform .45s cubic-bezier(.2,.8,.2,1);}
+.brand:hover .brand-logo{transform:rotate(-8deg) scale(1.08);}
+.hero{isolation:isolate;}
+.hero-bg-pattern{animation:eloPatternDrift 24s linear infinite;}
+@keyframes eloPatternDrift{from{transform:translate3d(0,0,0) rotate(0)}to{transform:translate3d(2.5%, -1.5%,0) rotate(2deg)}}
+.hero-emblem img{animation:eloFloat 5.5s ease-in-out infinite,eloGlow 4s ease-in-out infinite alternate;}
+@keyframes eloFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-17px) rotate(1deg)}}
+@keyframes eloGlow{from{filter:drop-shadow(0 0 0 rgba(195,156,119,0))}to{filter:drop-shadow(0 0 20px rgba(195,156,119,.28))}}
+.btn,.quick-card,.card,.proposal-card,.member-card,.event-card,.masonry-item,.filter-chip{
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,background-color .25s ease,border-color .25s ease;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(46,0,8,.2);}
+.quick-card:hover,.card:hover,.proposal-card:hover,.member-card:hover,.event-card:hover{
+  transform:translateY(-7px);box-shadow:0 22px 48px rgba(46,0,8,.13);
+}
+.masonry-item:hover{transform:translateY(-5px) scale(1.012);}
+.filter-chip:hover{transform:translateY(-2px);}
+.social-icons a:hover{transform:translateY(-4px) rotate(7deg) scale(1.06);}
+.page-enter{animation:eloPageEnter .65s cubic-bezier(.2,.75,.25,1) both;}
+@keyframes eloPageEnter{from{opacity:0;transform:translateY(15px) scale(.995);filter:blur(3px)}to{opacity:1;transform:none;filter:blur(0)}}
+.toast{backdrop-filter:blur(12px);}
+.modal{animation:eloModalIn .35s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes eloModalIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .hero-bg-pattern,.hero-emblem img,.page-enter,.modal{animation:none!important;}
+  .btn,.quick-card,.card,.proposal-card,.member-card,.event-card,.masonry-item,.filter-chip,.brand-logo,.footer-logo{transition:none!important;}
+}
+
+
+/* ============================================================
+   EFEITOS DE ANIMAÇÃO — ELO
+   Entrada por rolagem, movimentos de destaque e microinterações.
+   ============================================================ */
+@keyframes eloRevealUp {
+  0% { opacity: 0; transform: translate3d(0, 42px, 0) scale(.97); filter: blur(7px); }
+  70% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+}
+@keyframes eloRevealSide {
+  0% { opacity: 0; transform: translate3d(-42px, 0, 0); filter: blur(5px); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes eloSoftPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(195,156,119,0); }
+  50% { box-shadow: 0 0 0 11px rgba(195,156,119,.10), 0 0 35px rgba(195,156,119,.22); }
+}
+@keyframes eloShine {
+  0% { transform: translateX(-140%) skewX(-18deg); }
+  55%, 100% { transform: translateX(240%) skewX(-18deg); }
+}
+@keyframes eloOrbit {
+  from { transform: rotate(0deg) translateX(7px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(7px) rotate(-360deg); }
+}
+@keyframes eloUnderline {
+  from { transform: scaleX(0); transform-origin: left; }
+  to { transform: scaleX(1); transform-origin: left; }
+}
+
+/* Elementos aparecem com movimento quando entram na tela. */
+.reveal {
+  opacity: 0;
+  transform: translateY(34px);
+  filter: blur(4px);
+  transition: opacity .85s cubic-bezier(.2,.75,.25,1),
+              transform .85s cubic-bezier(.2,.75,.25,1),
+              filter .85s ease;
+  transition-delay: calc(var(--stagger, 0) * 95ms);
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  animation: eloRevealUp .9s cubic-bezier(.2,.75,.25,1) both;
+  animation-delay: calc(var(--stagger, 0) * 95ms);
+}
+.section-head.in { animation-name: eloRevealSide; }
+.quick-card.fade-in-up {
+  animation: eloRevealUp .85s cubic-bezier(.2,.75,.25,1) both;
+  animation-delay: calc(var(--stagger, 0) * 110ms);
+}
+.quick-links .quick-card:nth-child(1) { --stagger: 0; }
+.quick-links .quick-card:nth-child(2) { --stagger: 1; }
+.quick-links .quick-card:nth-child(3) { --stagger: 2; }
+.quick-links .quick-card:nth-child(4) { --stagger: 3; }
+.quick-links .quick-card:nth-child(5) { --stagger: 4; }
+
+/* Brilho que percorre os botões ao passar o dedo/mouse. */
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% -35%;
+  width: 28%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.48), transparent);
+  transform: translateX(-140%) skewX(-18deg);
+  pointer-events: none;
+}
+.btn:hover::after, .btn:focus-visible::after {
+  animation: eloShine .8s ease;
+}
+
+/* Pequeno destaque de luz nas áreas de marca e nos cards. */
+.hero-emblem img { animation: eloFloat 5s ease-in-out infinite, eloGlow 3.2s ease-in-out infinite alternate, eloSoftPulse 4s ease-in-out infinite; }
+.brand-logo:hover, .footer-logo:hover { transform: rotate(8deg) scale(1.1); }
+.quick-icon { transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.quick-card:hover .quick-icon { transform: rotate(-10deg) scale(1.16); }
+.card-media img, .gallery-thumb img, .masonry-item img { transition: transform .8s cubic-bezier(.2,.8,.2,1), filter .6s ease; }
+.card:hover .card-media img, .gallery-thumb:hover img, .masonry-item:hover img { transform: scale(1.07); filter: saturate(1.12); }
+.member-card:hover { transform: translateY(-9px) scale(1.015); }
+.social-icons a { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+.social-icons a:hover { box-shadow: 0 8px 22px rgba(195,156,119,.28); }
+
+/* Animação sutil de títulos e divisores das seções. */
+.section-head h2 { position: relative; }
+.section-head.in h2::after {
+  content: "";
+  display: block;
+  width: min(92px, 28%);
+  height: 3px;
+  margin-top: .55rem;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--vinho), var(--bege));
+  animation: eloUnderline .75s .2s both;
+}
+
+/* Respeita a preferência do sistema por menos movimento. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal.in, .quick-card.fade-in-up,
+  .hero-emblem img, .btn::after,
+  .section-head.in h2::after {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+
+/* Logos reais: mantenha logo.jpg na mesma pasta do index.html. */
+.intro-logo,.brand-logo,.footer-logo,.hero-emblem img{
+  display:block;
+  object-fit:contain;
+  object-position:center;
+}
+.intro-logo{ border-radius:50%; }
+.brand-logo{ width:46px; height:46px; border-radius:50%; flex-shrink:0; box-shadow:var(--shadow-sm); }
+.footer-logo{ width:54px; height:54px; border-radius:50%; flex-shrink:0; }
+.hero-emblem img{
+  width:clamp(190px,32vw,340px);
+  aspect-ratio:1;
+  height:auto;
+  border-radius:50%;
+  box-shadow:0 30px 70px rgba(0,0,0,.35),0 0 0 10px rgba(255,255,255,.05);
+}
+
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro" aria-hidden="true">
+  <div class="intro-inner">
+    <img class="intro-logo" src="logo.jpg" alt="Logo do Grêmio Estudantil ELO">
+    <div class="intro-title">
+      <span>GRÊMIO ESTUDANTIL</span>
+      <strong>ELO</strong>
+    </div>
+  </div>
+  <button id="skipIntro" class="intro-skip" type="button">Pular introdução →</button>
+</div>
+
+<a href="#main" class="skip-link">Pular para o conteúdo</a>
+
+<!-- HEADER -->
+<header id="siteHeader" class="site-header">
+  <div class="header-inner container">
+    <a href="#/" class="brand" data-link>
+      <img class="brand-logo" src="logo.jpg" alt="Logo do Grêmio Estudantil ELO">
+      <span class="brand-divider" aria-hidden="true"></span>
+      <span class="brand-text">
+        <small>GRÊMIO ESTUDANTIL</small>
+        <strong>ELO</strong>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Navegação principal">
+      <ul>
+        <li><a href="#/" data-link data-route="/">Início</a></li>
+        <li><a href="#/integrantes" data-link data-route="/integrantes">Integrantes</a></li>
+        <li><a href="#/noticias" data-link data-route="/noticias">Notícias</a></li>
+        <li><a href="#/propostas" data-link data-route="/propostas">Propostas</a></li>
+        <li><a href="#/eventos" data-link data-route="/eventos">Eventos</a></li>
+        <li><a href="#/galeria" data-link data-route="/galeria">Galeria</a></li>
+      </ul>
+    </nav>
+
+    <a href="#/participar" data-link class="btn btn-primary btn-participate">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 11a4 4 0 1 0-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M2 20c0-3.3 3.6-6 8-6s8 2.7 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/><path d="M18 14.8v2.4M16.8 16h2.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Participe!
+    </a>
+
+    <button id="menuToggle" class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div id="mobileNav" class="mobile-nav" aria-hidden="true">
+    <ul>
+      <li><a href="#/" data-link data-route="/">Início</a></li>
+      <li><a href="#/integrantes" data-link data-route="/integrantes">Integrantes</a></li>
+      <li><a href="#/noticias" data-link data-route="/noticias">Notícias</a></li>
+      <li><a href="#/propostas" data-link data-route="/propostas">Propostas</a></li>
+      <li><a href="#/eventos" data-link data-route="/eventos">Eventos</a></li>
+      <li><a href="#/galeria" data-link data-route="/galeria">Galeria</a></li>
+      <li><a href="#/participar" data-link class="mobile-cta">Participe!</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="main" tabindex="-1"></main>
+
+<footer class="site-footer">
+  <div class="container footer-top">
+    <div class="footer-brand reveal">
+      <img class="footer-logo" src="logo.jpg" alt="Logo do Grêmio Estudantil ELO">
+      <div>
+        <strong>GRÊMIO ESTUDANTIL ELO</strong>
+        <p>Juntos por uma escola ainda melhor.</p>
+      </div>
+    </div>
+
+    <nav aria-label="Links do rodapé" class="footer-links reveal">
+      <a href="#/" data-link>Início</a>
+      <a href="#/integrantes" data-link>Integrantes</a>
+      <a href="#/noticias" data-link>Notícias</a>
+      <a href="#/propostas" data-link>Propostas</a>
+      <a href="#/eventos" data-link>Eventos</a>
+      <a href="#/galeria" data-link>Galeria</a>
+    </nav>
+
+    <div class="footer-social reveal">
+      <span>Redes sociais</span>
+      <div class="social-icons">
+        <a href="https://www.instagram.com/elo.gremio_?bqrl=enZmZnA5M3dtdnF6" target="_blank" rel="noopener" aria-label="Instagram do Grêmio ELO">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube do Grêmio ELO">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M10 9.5l5 2.5-5 2.5v-5z" fill="currentColor"/></svg>
+        </a>
+        <a href="mailto:EX contato@gremioelo.com.br" aria-label="E-mail institucional">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 6.5l8.5 7 8.5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <form id="newsletterForm" class="footer-newsletter reveal" novalidate>
+      <label for="newsletterEmail">EX Receba nossas novidades</label>
+      <div class="newsletter-row">
+        <input id="newsletterEmail" type="email" required placeholder="Seu e-mail" autocomplete="email">
+        <button type="submit" class="btn btn-secondary">Inscrever-se</button>
+      </div>
+      <p class="newsletter-msg" role="status"></p>
+    </form>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>Grêmio Estudantil ELO · <span id="year"></span> · Todos os direitos reservados.</p>
+    <a href="#/admin" data-link class="footer-admin-link">Acesso administrativo</a>
+  </div>
+</footer>
+
+<div id="toastRoot" class="toast-root" aria-live="polite"></div>
+
+<!-- =============================================================
+     SUPABASE — conexão com o banco de dados real
+     Troque os dois valores abaixo pelos do SEU projeto:
+     1) SUPABASE_URL  -> Configurações > Geral (Project URL)
+     2) SUPABASE_ANON_KEY -> Configurações > Chaves de API (chave publicável, sb_publishable_...)
+     ============================================================= -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://jagdcqhaxqrnkvxlqpgh.supabase.com";
+  const SUPABASE_ANON_KEY = "sb_publishable_hlbo-4KNjx_2w5pEYDT_8Q_hJPzaZgg";
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+</script>
+
+<script>
+/* ============================================================
+   DADOS DE DEMONSTRAÇÃO
+   Tudo aqui é conteúdo de EXEMPLO para fins de demonstração do
+   layout e das funcionalidades. Nenhuma informação real sobre
+   integrantes, eventos ou resultados foi inventada como se fosse
+   verdadeira — todo item é identificado como demonstrativo na
+   interface (ver campo `demo: true` e textos "(exemplo)").
+   ============================================================ */
+
+(function (global) {
+  "use strict";
+
+  // ---- Placeholder visual generator (no external/copyrighted photos) ----
+  function placeholder(label, bg1, bg2) {
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="${bg1}"/>
+            <stop offset="1" stop-color="${bg2}"/>
+          </linearGradient>
+        </defs>
+        <rect width="600" height="450" fill="url(#g)"/>
+        <circle cx="300" cy="185" r="70" fill="rgba(255,255,255,0.18)"/>
+        <path d="M230 300 Q300 230 370 300 L370 340 L230 340 Z" fill="rgba(255,255,255,0.18)"/>
+        <text x="300" y="400" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="rgba(255,255,255,0.92)" text-anchor="middle">${label}</text>
+      </svg>`;
+    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+  }
+
+  const PALETTES = [
+    ["#5E010C", "#8a1c29"], ["#C39C77", "#D6B58A"], ["#360008", "#5E010C"],
+    ["#8a1c29", "#D6B58A"], ["#D6B58A", "#C39C77"], ["#5E010C", "#D6B58A"]
+  ];
+  function img(label, i) {
+    const p = PALETTES[i % PALETTES.length];
+    return placeholder(label, p[0], p[1]);
+  }
+
+  // ---------------- NOTÍCIAS ----------------
+  const NEWS = [
+    {
+      slug: " interclasse-2027",
+      category: "Esporte",
+      title: " Interclasse 2027: esporte, superação e união",
+      excerpt: "Competição reuniu todas as turmas em dois dias de jogos, com direito a torcida organizada e muita superação dentro de quadra.",
+      date: "2027-04-15",
+      cover: img("Notícia · Interclasse", 0),
+      body: [
+        "O Interclasse 2027 (exemplo) reuniu estudantes de todas as turmas em dois dias de competições esportivas organizadas pelo Grêmio ELO.",
+        "Além das partidas de vôlei, handebol e futsal, a programação incluiu apresentações culturais preparadas pelas turmas participantes.",
+        "A diretoria do Grêmio destacou a importância do evento para fortalecer o espírito de equipe e a convivência entre os alunos.",
+        "Este texto é um conteúdo de exemplo criado apenas para demonstrar o layout da página de notícias."
+      ],
+      demo: true
+    },
+    {
+      slug: "roda-de-ideias",
+      category: "Participação",
+      title: "Grêmio Elo promove roda de ideias com os estudantes",
+      excerpt: "Encontro aberto permitiu que alunos sugerissem melhorias para o espaço escolar e debatessem prioridades para o próximo semestre.",
+      date: "2027-04-10",
+      cover: img("Notícia · Roda de Ideias", 1),
+      body: [
+        "A roda de ideias (exemplo) foi criada para dar voz aos estudantes na construção das propostas do Grêmio.",
+        "Durante o encontro, os participantes puderam registrar sugestões que serão avaliadas pela diretoria estudantil.",
+        "A iniciativa deve se tornar um encontro recorrente, de acordo com o planejamento apresentado."
+      ],
+      demo: true
+    },
+    {
+      slug: "novas-propostas",
+      category: "Comunicado",
+      title: "Novas propostas para uma escola ainda melhor!",
+      excerpt: "Conheça as frentes de trabalho que a gestão do Grêmio ELO pretende desenvolver ao longo do ano letivo.",
+      date: "2025-04-08",
+      cover: "fotos/noticia-propostas.jpg",
+      body: [
+        "A gestão do Grêmio ELO (exemplo) apresentou as frentes de trabalho planejadas para o ano letivo.",
+        "As propostas abrangem áreas como infraestrutura, cultura, meio ambiente e bem-estar estudantil.",
+        "Confira a página de Propostas para acompanhar o andamento de cada projeto."
+      ],
+      demo: true
+    },
+    {
+      slug: "semana-da-escola",
+      category: "Evento",
+      title: "Semana da Escola terá programação especial",
+      excerpt: "Atividades culturais, esportivas e educativas vão tomar conta do pátio durante toda a semana comemorativa.",
+      date: "2025-05-02",
+      cover: "fotos/noticia-semana-escola.jpg",
+      body: [
+        "A Semana da Escola (exemplo) contará com atividades culturais, esportivas e educativas abertas a toda a comunidade escolar.",
+        "O Grêmio ELO é responsável pela organização de parte da programação, em parceria com a direção."
+      ],
+      demo: true
+    }
+  ];
+
+  // ---------------- EVENTOS ----------------
+  const EVENTS = [
+    { id: 1, date: "2025-04-25", title: "Interclasse 2025", place: "Ginásio da Escola", category: "Esporte", desc: "Competição esportiva entre as turmas, com jogos de vôlei, futsal e handebol (exemplo).", cover: "fotos/evento-interclasse.jpg" },
+    { id: 2, date: "2025-04-30", title: "Palestra: Saúde Mental", place: "Auditório da escola", category: "Palestra", desc: "Bate-papo aberto sobre saúde mental e bem-estar no ambiente escolar (exemplo).", cover: "fotos/evento-palestra.jpg" },
+    { id: 3, date: "2025-05-10", title: "Semana da Escola", place: "Diversas atividades", category: "Cultural", desc: "Programação especial com atividades culturais e recreativas (exemplo).", cover: "fotos/evento-semana-escola.jpg" },
+    { id: 4, date: "2025-05-22", title: "Feira de Sustentabilidade", place: "Pátio principal", category: "Meio Ambiente", desc: "Estandes com projetos de reciclagem e consumo consciente feitos pelos alunos (exemplo).", cover: "fotos/evento-sustentabilidade.jpg" },
+    { id: 5, date: "2025-06-05", title: "Mostra Cultural ELO", place: "Quadra coberta", category: "Cultural", desc: "Apresentações de música, dança e teatro organizadas pelas turmas (exemplo).", cover: "fotos/evento-mostra-cultural.jpg" }
+  ];
+
+  // ---------------- PROPOSTAS ----------------
+  const PROPOSALS = [
+    { id: 1, name: "Praça de convivência", category: "Infraestrutura", desc: "Criar um espaço de convivência arborizado no pátio para os intervalos (exemplo de proposta).", status: "andamento", progress: 55, updated: "2025-03-20" },
+    { id: 2, name: "Pontos de coleta seletiva", category: "Meio Ambiente", desc: "Instalar lixeiras de coleta seletiva em todos os andares da escola (exemplo de proposta).", status: "concluido", progress: 100, updated: "2025-02-12" },
+    { id: 3, name: "Sarau literário mensal", category: "Cultura", desc: "Promover encontros mensais de leitura e troca de livros entre os estudantes (exemplo de proposta).", status: "planejamento", progress: 10, updated: "2025-04-01" },
+    { id: 4, name: "Torneio intercultural", category: "Esporte", desc: "Organizar um torneio esportivo com temas culturais entre as turmas (exemplo de proposta).", status: "suspenso", progress: 25, updated: "2025-01-18" },
+    { id: 5, name: "Caixa de sugestões digital", category: "Participação", desc: "Formulário permanente para que qualquer estudante envie ideias ao Grêmio (exemplo de proposta).", status: "andamento", progress: 70, updated: "2025-04-05" },
+    { id: 6, name: "Horta escolar", category: "Meio Ambiente", desc: "Implantar uma horta comunitária cuidada pelos estudantes voluntários (exemplo de proposta).", status: "planejamento", progress: 5, updated: "2025-03-28" }
+  ];
+
+
+// ---------------- INTEGRANTES ----------------
+const MEMBERS = [
+  { id: 1, name: "[Nome do presidente]", role: "Presidência", dept: "Presidência", desc: "Responsável pela representação institucional do Grêmio.", img: "fotos/integrante-presidente.jpg" },
+
+  { id: 2, name: "[Thiago]", role: "Vice-presidência", dept: "Presidência", desc: "Apoia a presidência na condução das atividades do Grêmio.", img: "fotos/integrante-vice.jpg" },
+
+  { id: 3, name: "[Nome do secretário]", role: "Secretaria", dept: "Secretaria", desc: "Responsável pelas atas, comunicados e organização documental.", img: "fotos/integrante-secretaria.jpg" },
+
+  { id: 4, name: "[Nome do tesoureiro]", role: "Tesouraria", dept: "Tesouraria", desc: "Responsável pela gestão financeira das atividades do Grêmio.", img: "fotos/integrante-tesouraria.jpg" },
+
+  { id: 5, name: "[Nome do diretor]", role: "Diretoria de Cultura", dept: "Diretorias", desc: "Planeja eventos culturais e artísticos.", img: "fotos/integrante-diretoria-cultura.jpg" },
+
+  { id: 6, name: "[Nome do diretor]", role: "Diretoria de Esportes", dept: "Diretorias", desc: "Organiza competições e atividades esportivas.", img: "fotos/integrante-diretoria-esportes.jpg" },
+
+  { id: 7, name: "[Nome do diretor]", role: "Diretoria de Meio Ambiente", dept: "Diretorias", desc: "Coordena projetos de sustentabilidade na escola.", img: "fotos/integrante-presidente.jpg" },
+
+  { id: 8, name: "[Andressa]", role: "Diretoria de Comunicação", dept: "Diretorias", desc: "Cuida das redes sociais e comunicados oficiais.", img: "fotos/integrante-vice.jpg" }
+];
+
+  // ---------------- GALERIA ----------------
+  const GALLERY = [
+    { id: 1, title: "Interclasse 2025", category: "Esporte", event: "Interclasse 2025", img: "fotos/galeria-interclasse.jpg", tall: true },
+    { id: 2, title: "Reunião do Grêmio", category: "Institucional", event: "Roda de Ideias", img: "fotos/galeria-reuniao.jpg", tall: false },
+    { id: 3, title: "Decoração ELO", category: "Institucional", event: "Lançamento", img: "fotos/galeria-decoracao-elo.jpg", tall: false },
+    { id: 4, title: "Time de vôlei", category: "Esporte", event: "Interclasse 2025", img: "fotos/galeria-volei.jpg", tall: true },
+    { id: 5, title: "Mostra Cultural", category: "Cultura", event: "Mostra Cultural ELO", img: "fotos/galeria-mostra-cultural.jpg", tall: false },
+    { id: 6, title: "Feira de Sustentabilidade", category: "Meio Ambiente", event: "Feira de Sustentabilidade", img: "fotos/galeria-sustentabilidade.jpg", tall: false },
+    { id: 7, title: "Palestra Saúde Mental", category: "Institucional", event: "Palestra: Saúde Mental", img: "fotos/galeria-palestra.jpg", tall: true },
+    { id: 8, title: "Torcida organizada", category: "Esporte", event: "Interclasse 2027", img: "fotos/galeria-torcida.jpg", tall: false }
+  ];
+
+  global.ELO_DATA = { NEWS, EVENTS, PROPOSALS, MEMBERS, GALLERY, img };
+})(window);
+
+</script>
+<script>
+/* ============================================================
+   GRÊMIO ESTUDANTIL ELO — App (router + páginas + interações)
+   Site estático, front-end. Não há servidor real conectado:
+   os dados de "notícias", "eventos", "propostas", "galeria" e
+   "integrantes" são de demonstração, e a área administrativa
+   grava alterações apenas no navegador (localStorage), para
+   ilustrar o fluxo de um painel de gestão. Uma integração real
+   com Supabase (banco de dados, autenticação e storage) precisa
+   das credenciais do projeto do usuário — ver aviso na página /admin.
+   ============================================================ */
+
+(function () {
+  "use strict";
+
+  const $ = (sel, ctx) => (ctx || document).querySelector(sel);
+  const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
+  const main = $("#main");
+
+  /* ---------------------------------------------------------
+     STORAGE (demo "backend" local — não é persistência real/servidor)
+     --------------------------------------------------------- */
+  const Store = {
+    get(key, fallback) {
+      try {
+        const raw = localStorage.getItem("elo_" + key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { localStorage.setItem("elo_" + key, JSON.stringify(value)); return true; }
+      catch (e) { return false; }
+    }
+  };
+
+  function seed() {
+    if (!Store.get("news")) Store.set("news", window.ELO_DATA.NEWS);
+    if (!Store.get("events")) Store.set("events", window.ELO_DATA.EVENTS);
+    if (!Store.get("proposals")) Store.set("proposals", window.ELO_DATA.PROPOSALS);
+    if (!Store.get("members")) Store.set("members", window.ELO_DATA.MEMBERS);
+    if (!Store.get("gallery")) Store.set("gallery", window.ELO_DATA.GALLERY);
+    if (!Store.get("submissions")) Store.set("submissions", []);
+  }
+  seed();
+
+  function getNews() { return Store.get("news", []); }
+  function getEvents() { return Store.get("events", []).slice().sort((a, b) => a.date.localeCompare(b.date)); }
+  function getProposals() { return Store.get("proposals", []); }
+  function getMembers() { return Store.get("members", []); }
+  function getGallery() { return Store.get("gallery", []); }
+
+  /* ---------------------------------------------------------
+     HELPERS
+     --------------------------------------------------------- */
+  function fmtDate(iso) {
+    const d = new Date(iso + "T12:00:00");
+    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+  }
+  function fmtDateShort(iso) {
+    const d = new Date(iso + "T12:00:00");
+    return { day: d.toLocaleDateString("pt-BR", { day: "2-digit" }), mon: d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "").toUpperCase() };
+  }
+  function monthLabel(iso) {
+    const d = new Date(iso + "T12:00:00");
+    const s = d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function icon(name, size) {
+    size = size || 20;
+    const icons = {
+      calendar: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+      pin: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2.3" stroke="currentColor" stroke-width="1.8"/></svg>`,
+      arrow: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      news: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M17 8h4v10a2 2 0 0 1-2 2H9" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 8h7M6.5 11.5h7M6.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+      lamp: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" stroke="currentColor" stroke-width="1.8"/></svg>`,
+      photo: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.8" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 18.5l5-5.5 3.5 3.8L17 12l3.5 5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+      users: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="17.5" cy="9" r="2.4" stroke="currentColor" stroke-width="1.6"/><path d="M15.8 13.2c2.4.4 4.2 2.4 4.2 4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+      search: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4.3-4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+      check: `<svg width="${size*1.6}" height="${size*1.6}" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      info: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 8.2v.1M12 11v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+      close: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+      edit: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 20l.9-3.6L15.7 5.6a2 2 0 0 1 2.8 0l0 0a2 2 0 0 1 0 2.8L7.7 19.2 4 20z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`,
+      trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-.8 12.1A2 2 0 0 1 14.2 21H9.8a2 2 0 0 1-2-1.9L7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      lock: `<svg width="${size*1.3}" height="${size*1.3}" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8"/></svg>`,
+      logout: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      plus: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+      share: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="18" cy="5" r="2.4" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.4" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.4" stroke="currentColor" stroke-width="1.7"/><path d="M8.1 10.8l7.8-4.4M8.1 13.2l7.8 4.4" stroke="currentColor" stroke-width="1.6"/></svg>`
+    };
+    return icons[name] || "";
+  }
+  function toast(msg, type) {
+    const root = $("#toastRoot");
+    const el = document.createElement("div");
+    el.className = "toast" + (type === "error" ? " error" : "");
+    el.innerHTML = `${icon(type === "error" ? "close" : "check", 16)}<span>${escapeHtml(msg)}</span>`;
+    root.appendChild(el);
+    setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity .3s ease"; setTimeout(() => el.remove(), 300); }, 3200);
+  }
+
+  function revealObserve(root) {
+    const els = $$(".reveal", root || document);
+    if (!("IntersectionObserver" in window)) { els.forEach(e => e.classList.add("in")); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add("in"); io.unobserve(entry.target); } });
+    }, { threshold: 0.12 });
+    els.forEach(e => io.observe(e));
+  }
+
+  /* ---------------------------------------------------------
+     INTRO — abertura segura, inclusive abrindo o HTML localmente
+     --------------------------------------------------------- */
+  (function initIntro() {
+    const introEl = document.getElementById("intro");
+    const skipBtn = document.getElementById("skipIntro");
+    if (!introEl) return;
+
+    let finished = false;
+    let closeTimer;
+    function finishIntro() {
+      if (finished) return;
+      finished = true;
+      introEl.classList.add("hide");
+      introEl.setAttribute("aria-hidden", "true");
+      if (closeTimer) clearTimeout(closeTimer);
+      window.setTimeout(() => {
+        if (introEl && introEl.parentNode) introEl.remove();
+      }, 700);
+    }
+
+    introEl.setAttribute("aria-hidden", "false");
+    if (skipBtn) skipBtn.addEventListener("click", finishIntro);
+
+    const reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      finishIntro();
+    } else {
+      closeTimer = window.setTimeout(finishIntro, 3800);
+    }
+  })();
+
+  /* ---------------------------------------------------------
+     HEADER / MOBILE MENU
+     --------------------------------------------------------- */
+  const header = $("#siteHeader");
+  function onScroll() { header.classList.toggle("scrolled", window.scrollY > 12); }
+  document.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const menuToggle = $("#menuToggle");
+  const mobileNav = $("#mobileNav");
+  function closeMobileMenu() {
+    menuToggle.classList.remove("open"); menuToggle.setAttribute("aria-expanded", "false");
+    mobileNav.classList.remove("open"); mobileNav.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+  function toggleMobileMenu() {
+    const open = mobileNav.classList.toggle("open");
+    menuToggle.classList.toggle("open", open);
+    menuToggle.setAttribute("aria-expanded", String(open));
+    mobileNav.setAttribute("aria-hidden", String(!open));
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+  menuToggle.addEventListener("click", toggleMobileMenu);
+  mobileNav.addEventListener("click", (e) => { if (e.target.closest("a")) closeMobileMenu(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMobileMenu(); });
+
+  function setActiveNav(path) {
+    const top = "/" + (path.split("/")[1] || "");
+    $$("[data-route]").forEach(a => {
+      const r = a.getAttribute("data-route");
+      a.classList.toggle("active", r === "/" ? path === "/" : top === r);
+    });
+  }
+
+  /* ---------------------------------------------------------
+     ROUTER
+     --------------------------------------------------------- */
+  const routes = [];
+  function route(pattern, render) {
+    const keys = [];
+    const regex = new RegExp("^" + pattern.replace(/\/:([^/]+)/g, (_, k) => { keys.push(k); return "/([^/]+)"; }) + "$");
+    routes.push({ regex, keys, render });
+  }
+  function parseHash() {
+    let h = location.hash.slice(1) || "/";
+    const qIndex = h.indexOf("?");
+    let query = {};
+    if (qIndex > -1) {
+      new URLSearchParams(h.slice(qIndex + 1)).forEach((v, k) => query[k] = v);
+      h = h.slice(0, qIndex);
+    }
+    if (h.length > 1 && h.endsWith("/")) h = h.slice(0, -1);
+    return { path: h || "/", query };
+  }
+  function navigate() {
+    const { path, query } = parseHash();
+    closeMobileMenu();
+    for (const r of routes) {
+      const m = path.match(r.regex);
+      if (m) {
+        const params = {};
+        r.keys.forEach((k, i) => params[k] = decodeURIComponent(m[i + 1]));
+        setActiveNav(path);
+        renderPage(() => r.render(params, query));
+        return;
+      }
+    }
+    setActiveNav(path);
+    renderPage(renderNotFound);
+  }
+  function renderPage(fn) {
+    main.innerHTML = fn();
+    main.classList.remove("page-enter"); void main.offsetWidth; main.classList.add("page-enter");
+    main.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    revealObserve(main);
+    bindPageEvents();
+  }
+  window.addEventListener("hashchange", navigate);
+
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-link]");
+    if (a) { /* let hash change naturally */ }
+  });
+
+  /* ---------------------------------------------------------
+     PARTIALS
+     --------------------------------------------------------- */
+  function breadcrumb(label) {
+    return `<p class="eyebrow crumb">Grêmio ELO</p><h1>${label}</h1>`;
+  }
+  function newsCard(n, i) {
+    return `
+    <article class="card reveal" style="--stagger:${i || 0}">
+      <a href="#/noticias/${n.slug}" data-link class="card-media">
+        <img src="${n.cover}" alt="" loading="lazy">
+        <span class="pill pill-vinho">${escapeHtml(n.category)}</span>
+      </a>
+      <div class="card-body">
+        <div class="card-meta">${icon("calendar", 14)} ${fmtDate(n.date)}</div>
+        <h3>${escapeHtml(n.title)}</h3>
+        <p>${escapeHtml(n.excerpt)}</p>
+        <a href="#/noticias/${n.slug}" data-link class="card-footer-link">Leia mais ${icon("arrow", 16)}</a>
+      </div>
+    </article>`;
+  }
+  function eventRowCompact(ev) {
+    const d = fmtDateShort(ev.date);
+    return `
+    <div class="event-row">
+      <div class="event-date"><small>${d.mon}</small><strong>${d.day}</strong></div>
+      <div class="event-info"><strong>${escapeHtml(ev.title)}</strong><span>${escapeHtml(ev.place)}</span></div>
+    </div>`;
+  }
+  function statusLabel(s) {
+    return { planejamento: "Planejamento", andamento: "Em andamento", concluido: "Concluído", suspenso: "Suspenso" }[s] || s;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: HOME
+     --------------------------------------------------------- */
+  function renderHome() {
+    const news = getNews().slice(0, 3);
+    const events = getEvents().filter(e => new Date(e.date) >= new Date(new Date().toDateString())).slice(0, 4);
+    const shownEvents = events.length ? events : getEvents().slice(0, 4);
+    const gallery = getGallery().slice(0, 8);
+
+    return `
+    <section class="hero">
+      <div class="hero-bg-pattern"></div>
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow">Grêmio Estudantil</span>
+          <h1>Juntos por uma escola ainda melhor.</h1>
+          <p>Representatividade, participação e transformação dentro da nossa escola.</p>
+          <div class="hero-ctas">
+            <a href="#/integrantes" data-link class="btn btn-primary">${icon("users",18)} Conheça o Grêmio</a>
+            <a href="#/participar" data-link class="btn btn-ghost-gold">Enviar sugestão</a>
+          </div>
+        </div>
+        <div class="hero-emblem"><img src="logo.jpg" alt="Logo do Grêmio Estudantil ELO"></div>
+      </div>
+      <div class="hero-curve"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,40 C360,90 1080,0 1440,50 L1440,100 L0,100 Z" fill="#F8EBDD"/></svg></div>
+    </section>
+
+    <div class="container">
+      <div class="quick-links">
+        <a href="#/noticias" data-link class="quick-card fade-in-up"><span class="quick-icon">${icon("news",24)}</span><span>Notícias</span></a>
+        <a href="#/propostas" data-link class="quick-card fade-in-up"><span class="quick-icon">${icon("lamp",24)}</span><span>Propostas</span></a>
+        <a href="#/eventos" data-link class="quick-card fade-in-up"><span class="quick-icon">${icon("calendar",24)}</span><span>Eventos</span></a>
+        <a href="#/galeria" data-link class="quick-card fade-in-up"><span class="quick-icon">${icon("photo",24)}</span><span>Galeria de Fotos</span></a>
+        <a href="#/integrantes" data-link class="quick-card fade-in-up"><span class="quick-icon">${icon("users",24)}</span><span>Integrantes</span></a>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="container">
+        <div class="home-split">
+          <div>
+            <div class="section-head reveal">
+              <h2>Últimas notícias</h2>
+              <a href="#/noticias" data-link class="see-all">Ver todas ${icon("arrow",16)}</a>
+            </div>
+            <div class="news-grid">${news.map(newsCard).join("")}</div>
+          </div>
+          <div class="events-panel reveal">
+            <div class="events-panel-head">
+              <h3>Próximos eventos</h3>
+              <a href="#/eventos" data-link>Ver calendário</a>
+            </div>
+            ${shownEvents.map(eventRowCompact).join("") || `<p style="color:var(--creme);opacity:.8">Nenhum evento no momento.</p>`}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="participate-band reveal">
+          <div class="participate-copy">
+            <span class="icon-badge">${icon("lamp",24)}</span>
+            <div>
+              <h2>Faça parte do Elo!</h2>
+              <p>Sua voz também constrói nossa escola.</p>
+            </div>
+          </div>
+          <a href="#/participar" data-link class="btn btn-secondary">Enviar sugestão ${icon("arrow",16)}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Galeria de Fotos</h2>
+          <a href="#/galeria" data-link class="see-all">Ver todas as fotos ${icon("arrow",16)}</a>
+        </div>
+        <div class="gallery-strip">
+          <div class="gallery-track" id="homeGalleryTrack">
+            ${gallery.map((g, i) => `
+              <div class="gallery-thumb reveal" style="--stagger:${i % 6}" data-lightbox-trigger data-gallery-index="${i}">
+                <img src="${g.img}" alt="${escapeHtml(g.title)}" loading="lazy">
+              </div>`).join("")}
+          </div>
+          <div class="gallery-strip-nav">
+            <button type="button" data-scroll="-1" aria-label="Fotos anteriores">${icon("arrow",18)}</button>
+            <button type="button" data-scroll="1" aria-label="Próximas fotos" style="transform:none">${icon("arrow",18)}</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    ${lightboxMarkup(gallery)}
+    `;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: INTEGRANTES
+     --------------------------------------------------------- */
+  function renderMembers(_, query) {
+    const members = getMembers();
+    const depts = ["Todos", ...Array.from(new Set(members.map(m => m.dept)))];
+    const active = query.dept && depts.includes(query.dept) ? query.dept : "Todos";
+    const list = active === "Todos" ? members : members.filter(m => m.dept === active);
+
+    return `
+    <section class="page-hero"><div class="container crumb">${breadcrumb("Integrantes")}<p>Conheça quem representa os estudantes no Grêmio ELO.</p></div></section>
+    <section class="section">
+      <div class="container">
+        <div class="section-note">${icon("info",18)}<span>Esta página usa fotografias e nomes de demonstração. Nenhuma informação real sobre integrantes foi inventada — os espaços estão identificados como exemplo e podem ser preenchidos pela administração da escola.</span></div>
+        <div class="filter-bar" id="memberFilters">
+          ${depts.map(d => `<button type="button" class="filter-chip ${d === active ? "active" : ""}" data-dept="${escapeHtml(d)}">${escapeHtml(d)}</button>`).join("")}
+        </div>
+        <div class="members-grid">
+          ${list.map((m, i) => `
+          <div class="member-card reveal" style="--stagger:${i % 6}">
+            <div class="member-photo"><img src="${m.img}" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"><span class="demo-tag pill pill-gold" style="position:relative">Exemplo</span></div>
+            <div class="member-info">
+              <strong>${escapeHtml(m.name)}</strong>
+              <span class="role">${escapeHtml(m.role)}</span>
+              <p class="desc">${escapeHtml(m.desc)}</p>
+            </div>
+          </div>`).join("") || `<div class="empty-state">${icon("users",40)}<p>Nenhum integrante nesse departamento ainda.</p></div>`}
+        </div>
+      </div>
+    </section>`;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: NOTÍCIAS (lista) + DETALHE
+     --------------------------------------------------------- */
+  function renderNewsList(_, query) {
+    const all = getNews();
+    const cats = ["Todas", ...Array.from(new Set(all.map(n => n.category)))];
+    const activeCat = query.cat && cats.includes(query.cat) ? query.cat : "Todas";
+    const q = (query.q || "").toLowerCase();
+    let list = activeCat === "Todas" ? all : all.filter(n => n.category === activeCat);
+    if (q) list = list.filter(n => n.title.toLowerCase().includes(q) || n.excerpt.toLowerCase().includes(q));
+    list = list.slice().sort((a, b) => b.date.localeCompare(a.date));
+
+    return `
+    <section class="page-hero"><div class="container crumb">${breadcrumb("Notícias")}<p>Fique por dentro do que acontece no Grêmio e na escola.</p></div></section>
+    <section class="section">
+      <div class="container">
+        <div class="news-toolbar">
+          <div class="filter-bar" id="newsFilters" style="margin:0">
+            ${cats.map(c => `<button type="button" class="filter-chip ${c === activeCat ? "active" : ""}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+          </div>
+          <div class="search-input">
+            ${icon("search", 18)}
+            <input type="search" id="newsSearch" placeholder="Pesquisar notícias..." value="${escapeHtml(query.q || "")}" aria-label="Pesquisar notícias">
+          </div>
+        </div>
+        <div class="news-grid">
+          ${list.map(newsCard).join("") || `<div class="empty-state" style="grid-column:1/-1">${icon("news",40)}<p>Nenhuma notícia encontrada para esse filtro.</p></div>`}
+        </div>
+      </div>
+    </section>`;
+  }
+
+  function renderNewsDetail(params) {
+    const all = getNews();
+    const n = all.find(x => x.slug === params.slug);
+    if (!n) return renderNotFound();
+    const related = all.filter(x => x.slug !== n.slug).slice(0, 3);
+    return `
+    <section class="section">
+      <div class="container article-layout">
+        <div>
+          <a href="#/noticias" data-link class="back-link">${icon("arrow",16)} Voltar para notícias</a>
+          <div class="article-hero-img"><img src="${n.cover}" alt=""></div>
+          <div class="article-body">
+            <span class="pill pill-vinho">${escapeHtml(n.category)}</span>
+            <h1 style="margin-top:.8rem">${escapeHtml(n.title)}</h1>
+            <div class="article-meta">${icon("calendar",15)} ${fmtDate(n.date)} <span>·</span> Grêmio Estudantil ELO</div>
+            <div class="prose">${n.body.map(p => `<p>${escapeHtml(p)}</p>`).join("")}</div>
+            <div class="article-share">
+              <span style="font-weight:700;color:var(--vinho-escuro);font-size:.85rem">Compartilhar:</span>
+              <button type="button" data-share="${escapeHtml(n.title)}" aria-label="Compartilhar notícia">${icon("share",18)}</button>
+            </div>
+          </div>
+        </div>
+        <aside>
+          <div class="sidebar-box">
+            <h4>Outras notícias</h4>
+            ${related.map(r => `
+              <a href="#/noticias/${r.slug}" data-link class="sidebar-related">
+                <img src="${r.cover}" alt="">
+                <div><strong>${escapeHtml(r.title)}</strong></div>
+              </a>`).join("")}
+          </div>
+          <div class="sidebar-box">
+            <h4>Faça parte do Elo</h4>
+            <p style="font-size:.88rem;color:var(--text-soft);margin-bottom:1rem">Tem uma ideia para a escola? Envie para o Grêmio.</p>
+            <a href="#/participar" data-link class="btn btn-secondary" style="width:100%">Enviar sugestão</a>
+          </div>
+        </aside>
+      </div>
+    </section>`;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: PROPOSTAS
+     --------------------------------------------------------- */
+  function renderProposals(_, query) {
+    const all = getProposals();
+    const statuses = ["todos", "planejamento", "andamento", "concluido", "suspenso"];
+    const active = statuses.includes(query.status) ? query.status : "todos";
+    const list = active === "todos" ? all : all.filter(p => p.status === active);
+
+    return `
+    <section class="page-hero"><div class="container crumb">${breadcrumb("Propostas")}<p>Acompanhe os projetos e propostas em desenvolvimento pela gestão do Grêmio.</p></div></section>
+    <section class="section">
+      <div class="container">
+        <div class="section-note">${icon("info",18)}<span>Os percentuais de progresso exibidos abaixo são dados demonstrativos, usados apenas para ilustrar o layout da página.</span></div>
+        <div class="filter-bar" id="proposalFilters">
+          ${statuses.map(s => `<button type="button" class="filter-chip ${s === active ? "active" : ""}" data-status="${s}">${s === "todos" ? "Todos" : statusLabel(s)}</button>`).join("")}
+        </div>
+        <div class="proposals-grid">
+          ${list.map((p, i) => `
+          <div class="proposal-card reveal" style="--stagger:${i % 6}">
+            <div class="proposal-top">
+              <span class="pill pill-outline">${escapeHtml(p.category)}</span>
+              <span class="badge-status badge-${p.status}">${statusLabel(p.status)}</span>
+            </div>
+            <h3>${escapeHtml(p.name)}</h3>
+            <p>${escapeHtml(p.desc)}</p>
+            <div class="progress-track"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+            <div class="progress-label"><span>Progresso</span><span>${p.progress}%</span></div>
+            <div class="proposal-meta">${icon("calendar",14)} Atualizado em ${fmtDate(p.updated)}</div>
+          </div>`).join("") || `<div class="empty-state" style="grid-column:1/-1">${icon("lamp",40)}<p>Nenhuma proposta com esse status.</p></div>`}
+        </div>
+      </div>
+    </section>`;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: EVENTOS
+     --------------------------------------------------------- */
+  function renderEvents(_, query) {
+    const all = getEvents();
+    const cats = ["Todas", ...Array.from(new Set(all.map(e => e.category)))];
+    const active = query.cat && cats.includes(query.cat) ? query.cat : "Todas";
+    const list = active === "Todas" ? all : all.filter(e => e.category === active);
+
+    const groups = {};
+    list.forEach(ev => { const m = monthLabel(ev.date); (groups[m] = groups[m] || []).push(ev); });
+
+    return `
+    <section class="page-hero"><div class="container crumb">${breadcrumb("Eventos")}<p>Confira o calendário de eventos organizados pelo Grêmio ELO.</p></div></section>
+    <section class="section">
+      <div class="container">
+        <div class="filter-bar" id="eventFilters">
+          ${cats.map(c => `<button type="button" class="filter-chip ${c === active ? "active" : ""}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+        </div>
+        <div class="events-layout">
+          <div class="events-list">
+            ${Object.keys(groups).map(m => `
+              <h3 class="month-label">${m}</h3>
+              ${groups[m].map((ev, i) => {
+                const d = fmtDateShort(ev.date);
+                return `
+                <div class="event-card reveal" style="--stagger:${i % 6}">
+                  <div class="event-date"><small>${d.mon}</small><strong>${d.day}</strong></div>
+                  <div class="event-card-body">
+                    <h3>${escapeHtml(ev.title)}</h3>
+                    <p>${escapeHtml(ev.desc)}</p>
+                    <div class="event-card-tags">
+                      <span class="pill pill-outline">${icon("pin",13)} ${escapeHtml(ev.place)}</span>
+                      <span class="pill pill-outline">${escapeHtml(ev.category)}</span>
+                    </div>
+                    <div class="event-card-foot">
+                      <span style="font-size:.8rem;color:var(--text-soft)">${fmtDate(ev.date)}</span>
+                      <button type="button" class="btn btn-outline btn-sm" data-event-detail="${ev.id}">Ver detalhes</button>
+                    </div>
+                  </div>
+                </div>`;
+              }).join("")}
+            `).join("") || `<div class="empty-state">${icon("calendar",40)}<p>Nenhum evento encontrado.</p></div>`}
+          </div>
+          <aside>
+            <div class="mini-cal">
+              <div class="mini-cal-head"><strong>${all.length ? monthLabel(all[0].date) : ""}</strong></div>
+              <p style="font-size:.82rem;color:var(--text-soft);margin-bottom:.8rem">Dias com eventos estão destacados.</p>
+              <div class="mini-cal-grid" id="miniCal">${renderMiniCal(all)}</div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+    ${eventDetailModal(all)}
+    `;
+  }
+  function renderMiniCal(events) {
+    if (!events.length) return "";
+    const base = new Date(events[0].date + "T12:00:00");
+    const year = base.getFullYear(), month = base.getMonth();
+    const first = new Date(year, month, 1);
+    const startDow = first.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const eventDays = new Set(events.filter(e => { const d = new Date(e.date + "T12:00:00"); return d.getFullYear() === year && d.getMonth() === month; }).map(e => new Date(e.date + "T12:00:00").getDate()));
+    let html = ["D", "S", "T", "Q", "Q", "S", "S"].map(d => `<div class="dow">${d}</div>`).join("");
+    for (let i = 0; i < startDow; i++) html += `<div class="day muted"></div>`;
+    for (let d = 1; d <= daysInMonth; d++) html += `<div class="day ${eventDays.has(d) ? "has-event" : ""}">${d}</div>`;
+    return html;
+  }
+  function eventDetailModal(events) {
+    return `
+    <div class="modal-backdrop" id="eventModalBackdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
+        <div class="modal-head"><h3 id="eventModalTitle">Detalhes do evento</h3><button class="modal-close" type="button" data-close-modal aria-label="Fechar">${icon("close",16)}</button></div>
+        <div id="eventModalBody"></div>
+      </div>
+    </div>`;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: GALERIA
+     --------------------------------------------------------- */
+  function renderGallery(_, query) {
+    const all = getGallery();
+    const cats = ["Todas", ...Array.from(new Set(all.map(g => g.category)))];
+    const active = query.cat && cats.includes(query.cat) ? query.cat : "Todas";
+    const list = active === "Todas" ? all : all.filter(g => g.category === active);
+
+    return `
+    <section class="page-hero"><div class="container crumb">${breadcrumb("Galeria de Fotos")}<p>Reviva os melhores momentos do Grêmio e da nossa escola.</p></div></section>
+    <section class="section">
+      <div class="container">
+        <div class="filter-bar" id="galleryFilters">
+          ${cats.map(c => `<button type="button" class="filter-chip ${c === active ? "active" : ""}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+        </div>
+        <div class="masonry" id="masonryGrid">
+          ${list.map((g, i) => `
+          <div class="masonry-item reveal" style="--stagger:${i % 6}" data-lightbox-trigger data-gallery-index="${i}">
+            <img src="${g.img}" alt="${escapeHtml(g.title)}" loading="lazy" style="${g.tall ? "aspect-ratio:3/4.2;object-fit:cover" : ""}">
+            <div class="masonry-overlay"><span>${escapeHtml(g.title)} · ${escapeHtml(g.event)}</span></div>
+          </div>`).join("") || `<div class="empty-state">${icon("photo",40)}<p>Nenhuma foto nessa categoria.</p></div>`}
+        </div>
+      </div>
+    </section>
+    ${lightboxMarkup(list)}
+    `;
+  }
+  function lightboxMarkup(list) {
+    window.__eloLightboxList = list;
+    return `
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualizador de imagens">
+      <button class="lightbox-close" type="button" id="lightboxClose" aria-label="Fechar">${icon("close",18)}</button>
+      <button class="lightbox-nav lightbox-prev" type="button" id="lightboxPrev" aria-label="Foto anterior" style="transform:translateY(-50%) rotate(180deg)">${icon("arrow",18)}</button>
+      <button class="lightbox-nav lightbox-next" type="button" id="lightboxNext" aria-label="Próxima foto">${icon("arrow",18)}</button>
+      <div class="lightbox-content">
+        <img id="lightboxImg" src="" alt="">
+        <p class="lightbox-caption" id="lightboxCaption"></p>
+      </div>
+    </div>`;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: PARTICIPAR
+     --------------------------------------------------------- */
+  function renderParticipate() {
+    return `
+    <section class="page-hero"><div class="container crumb">${breadcrumb("Faça parte do Elo")}<p>Sua voz também constrói nossa escola. Envie sua sugestão, ideia ou crítica construtiva.</p></div></section>
+    <section class="section">
+      <div class="container">
+        <div class="form-card reveal">
+          <div id="participateFormWrap">
+            <h2 style="color:var(--vinho-escuro)">Enviar sugestão</h2>
+            <p style="color:var(--text-soft);margin-top:.4rem;font-size:.92rem">Preencha os campos abaixo. Sua sugestão será registrada e analisada pela diretoria do Grêmio.</p>
+            <form id="participateForm" novalidate>
+              <div class="form-grid two-col">
+                <div class="field" data-field="nome">
+                  <label for="pNome">Nome completo <span class="req">*</span></label>
+                  <input id="pNome" name="nome" type="text" autocomplete="name" required>
+                  <span class="error">Informe seu nome.</span>
+                </div>
+                <div class="field" data-field="turma">
+                  <label for="pTurma">Turma <span class="req">*</span></label>
+                  <input id="pTurma" name="turma" type="text" placeholder="Ex: 9º Ano B" required>
+                  <span class="error">Informe sua turma.</span>
+                </div>
+              </div>
+              <div class="form-grid two-col">
+                <div class="field" data-field="email">
+                  <label for="pEmail">E-mail <span class="req">*</span></label>
+                  <input id="pEmail" name="email" type="email" autocomplete="email" required>
+                  <span class="error">Informe um e-mail válido.</span>
+                </div>
+                <div class="field" data-field="categoria">
+                  <label for="pCategoria">Categoria</label>
+                  <select id="pCategoria" name="categoria">
+                    <option>Sugestão</option>
+                    <option>Crítica construtiva</option>
+                    <option>Elogio</option>
+                    <option>Dúvida</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="field" data-field="mensagem">
+                  <label for="pMensagem">Sua mensagem <span class="req">*</span></label>
+                  <textarea id="pMensagem" name="mensagem" required placeholder="Conte sua ideia com detalhes..."></textarea>
+                  <span class="error">Escreva sua mensagem.</span>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-secondary">Enviar sugestão ${icon("arrow",16)}</button>
+                <span class="hint">Campos com <span class="req">*</span> são obrigatórios.</span>
+              </div>
+            </form>
+          </div>
+          <div class="form-success" id="participateSuccess">
+            ${icon("check",28)}
+            <h3>Sugestão enviada!</h3>
+            <p>Obrigado por participar. Sua mensagem foi registrada (demonstração local, salva neste navegador) e será analisada pela diretoria do Grêmio.</p>
+            <button type="button" class="btn btn-outline mt-lg" id="participateAgain">Enviar outra sugestão</button>
+          </div>
+        </div>
+      </div>
+    </section>`;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: ADMIN
+     --------------------------------------------------------- */
+  const ADMIN_SESSION_KEY = "";
+  function isAdminLogged() { return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"; }
+
+  function renderAdmin() {
+    if (!isAdminLogged()) return renderAdminLogin();
+    return renderAdminPanel("news");
+  }
+  function renderAdminLogin() {
+    return `
+    <section class="admin-shell section">
+      <div class="container">
+        <div class="admin-login reveal">
+          <div style="display:flex;justify-content:center;color:var(--vinho);margin-bottom:1rem">${icon("lock",22)}</div>
+          <h2>Acesso administrativo</h2>
+          <p class="sub">Painel restrito à diretoria do Grêmio Estudantil ELO.</p>
+          <div class="demo-banner">${icon("info",17)}<span><strong>Modo de demonstração:</strong> este painel não está conectado a um banco de dados real. Use a senha de demonstração <strong>elo2027</strong> para explorar a interface. Nenhuma autenticação segura real está ativa.</span></div>
+          <form id="adminLoginForm" novalidate>
+            <div class="form-grid">
+              <div class="field" data-field="user">
+                <label for="aUser">Usuário</label>
+                <input id="aUser" name="user" type="text" autocomplete="username" placeholder="admin" required>
+              </div>
+              <div class="field" data-field="pass">
+                <label for="aPass">Senha</label>
+                <input id="aPass" name="pass" type="password" autocomplete="current-password" required>
+                <span class="error">Senha incorreta. Dica: 7</span>
+              </div>
+            </div>
+            <div class="form-actions" style="justify-content:center;margin-top:1.4rem">
+              <button type="submit" class="btn btn-secondary" style="width:100%">Entrar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>`;
+  }
+
+  const ADMIN_TABS = [
+    { id: "news", label: "Notícias", icon: "news" },
+    { id: "events", label: "Eventos", icon: "calendar" },
+    { id: "proposals", label: "Propostas", icon: "lamp" },
+    { id: "gallery", label: "Galeria", icon: "photo" },
+    { id: "members", label: "Integrantes", icon: "users" },
+    { id: "submissions", label: "Sugestões recebidas", icon: "lamp" }
+  ];
+
+  function renderAdminPanel(tab) {
+    return `
+    <section class="admin-shell section">
+      <div class="container">
+        <div class="demo-banner reveal">${icon("info",17)}<span><strong>Painel de demonstração:</strong> as alterações feitas aqui são salvas apenas neste navegador (localStorage), para ilustrar o fluxo de gestão de conteúdo. Para publicar de verdade (com banco de dados, autenticação e upload de imagens), é necessário conectar um backend real — por exemplo, um projeto Supabase com as credenciais da escola.</span></div>
+        <div class="admin-layout">
+          <nav class="admin-side">
+            ${ADMIN_TABS.map(t => `<button type="button" class="${t.id === tab ? "active" : ""}" data-admin-tab="${t.id}">${icon(t.icon,16)} ${t.label}</button>`).join("")}
+            <button type="button" class="admin-logout" id="adminLogout" style="margin-top:1rem;border-top:1px solid rgba(255,255,255,.15);padding-top:1rem">${icon("logout",16)} Sair</button>
+          </nav>
+          <div class="admin-panel" id="adminPanelBody">${renderAdminTabBody(tab)}</div>
+        </div>
+      </div>
+    </section>
+    <div class="modal-backdrop" id="adminModalBackdrop">
+      <div class="modal" role="dialog" aria-modal="true">
+        <div class="modal-head"><h3 id="adminModalTitle">Editar</h3><button class="modal-close" type="button" data-close-admin-modal aria-label="Fechar">${icon("close",16)}</button></div>
+        <div id="adminModalBody"></div>
+      </div>
+    </div>`;
+  }
+
+  function renderAdminTabBody(tab) {
+    const label = ADMIN_TABS.find(t => t.id === tab)?.label || tab;
+    const addable = tab !== "submissions";
+    let rows = "";
+    if (tab === "news") rows = getNews().map(n => `
+      <tr><td><strong>${escapeHtml(n.title)}</strong></td><td>${escapeHtml(n.category)}</td><td>${fmtDate(n.date)}</td>
+      <td><div class="admin-row-actions"><button class="icon-btn" data-edit="news:${n.slug}">${icon("edit")}</button><button class="icon-btn danger" data-del="news:${n.slug}">${icon("trash")}</button></div></td></tr>`).join("");
+    if (tab === "events") rows = getEvents().map(e => `
+      <tr><td><strong>${escapeHtml(e.title)}</strong></td><td>${escapeHtml(e.category)}</td><td>${fmtDate(e.date)}</td>
+      <td><div class="admin-row-actions"><button class="icon-btn" data-edit="events:${e.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="events:${e.id}">${icon("trash")}</button></div></td></tr>`).join("");
+    if (tab === "proposals") rows = getProposals().map(p => `
+      <tr><td><strong>${escapeHtml(p.name)}</strong></td><td>${statusLabel(p.status)}</td><td>${p.progress}%</td>
+      <td><div class="admin-row-actions"><button class="icon-btn" data-edit="proposals:${p.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="proposals:${p.id}">${icon("trash")}</button></div></td></tr>`).join("");
+    if (tab === "gallery") rows = getGallery().map(g => `
+      <tr><td><strong>${escapeHtml(g.title)}</strong></td><td>${escapeHtml(g.category)}</td><td>${escapeHtml(g.event)}</td>
+      <td><div class="admin-row-actions"><button class="icon-btn" data-edit="gallery:${g.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="gallery:${g.id}">${icon("trash")}</button></div></td></tr>`).join("");
+    if (tab === "members") rows = getMembers().map(m => `
+      <tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${escapeHtml(m.role)}</td><td>${escapeHtml(m.dept)}</td>
+      <td><div class="admin-row-actions"><button class="icon-btn" data-edit="members:${m.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="members:${m.id}">${icon("trash")}</button></div></td></tr>`).join("");
+    if (tab === "submissions") {
+      const subs = Store.get("submissions", []);
+      rows = subs.slice().reverse().map((s, i) => `
+        <tr><td><strong>${escapeHtml(s.nome)}</strong><br><small style="color:var(--text-soft)">${escapeHtml(s.email)}</small></td><td>${escapeHtml(s.categoria)}</td><td style="max-width:280px">${escapeHtml(s.mensagem).slice(0, 80)}${s.mensagem.length > 80 ? "…" : ""}</td><td>${new Date(s.date).toLocaleDateString("pt-BR")}</td></tr>`).join("");
+    }
+    const cols = tab === "submissions"
+      ? ["Nome / e-mail", "Categoria", "Mensagem", "Data"]
+      : tab === "news" ? ["Título", "Categoria", "Data", "Ações"]
+      : tab === "events" ? ["Título", "Categoria", "Data", "Ações"]
+      : tab === "proposals" ? ["Nome", "Status", "Progresso", "Ações"]
+      : tab === "gallery" ? ["Título", "Categoria", "Evento", "Ações"]
+      : ["Nome", "Cargo", "Departamento", "Ações"];
+
+    return `
+      <div class="admin-panel-head">
+        <h3>${label}</h3>
+        ${addable ? `<button class="btn btn-secondary btn-sm" id="adminAddBtn" data-add="${tab}">${icon("plus")} Adicionar</button>` : ""}
+      </div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr></thead>
+          <tbody>${rows || `<tr><td colspan="${cols.length}" style="text-align:center;color:var(--text-soft);padding:2rem">Nenhum item ainda.</td></tr>`}</tbody>
+        </table>
+      </div>`;
+  }
+
+  /* ---------------------------------------------------------
+     PAGE: 404
+     --------------------------------------------------------- */
+  function renderNotFound() {
+    return `
+    <section class="section not-found">
+      <div class="container">
+        <h1>404</h1>
+        <h2 style="color:var(--vinho-escuro)">Página não encontrada</h2>
+        <p style="color:var(--text-soft);margin:1rem 0 1.5rem">A página que você procura não existe ou foi movida.</p>
+        <a href="#/" data-link class="btn btn-secondary">Voltar para o início</a>
+      </div>
+    </section>`;
+  }
+
+  /* ---------------------------------------------------------
+     ROUTES
+     --------------------------------------------------------- */
+  route("/", renderHome);
+  route("/integrantes", renderMembers);
+  route("/noticias", renderNewsList);
+  route("/noticias/:slug", renderNewsDetail);
+  route("/propostas", renderProposals);
+  route("/eventos", renderEvents);
+  route("/galeria", renderGallery);
+  route("/participar", renderParticipate);
+  route("/admin", renderAdmin);
+
+  /* ---------------------------------------------------------
+     EVENT BINDING (re-bound after every render)
+     --------------------------------------------------------- */
+  function bindPageEvents() {
+    // ---- Filters that update the URL query (re-render via hashchange) ----
+    function filterNav(basePath, param, value, extraQuery) {
+      const { query } = parseHash();
+      const q = Object.assign({}, query, extraQuery || {});
+      q[param] = value;
+      const qs = new URLSearchParams(Object.entries(q).filter(([, v]) => v && v !== "Todas" && v !== "todos")).toString();
+      location.hash = "#" + basePath + (qs ? "?" + qs : "");
+    }
+    $$("#memberFilters [data-dept]").forEach(b => b.addEventListener("click", () => filterNav("/integrantes", "dept", b.dataset.dept)));
+    $$("#proposalFilters [data-status]").forEach(b => b.addEventListener("click", () => filterNav("/propostas", "status", b.dataset.status)));
+    $$("#eventFilters [data-cat]").forEach(b => b.addEventListener("click", () => filterNav("/eventos", "cat", b.dataset.cat)));
+    $$("#galleryFilters [data-cat]").forEach(b => b.addEventListener("click", () => filterNav("/galeria", "cat", b.dataset.cat)));
+    $$("#newsFilters [data-cat]").forEach(b => b.addEventListener("click", () => filterNav("/noticias", "cat", b.dataset.cat, { q: $("#newsSearch") ? $("#newsSearch").value : "" })));
+    const newsSearch = $("#newsSearch");
+    if (newsSearch) {
+      let t;
+      newsSearch.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => filterNav("/noticias", "q", newsSearch.value), 350); });
+    }
+
+    // ---- Home gallery strip scroll ----
+    $$("[data-scroll]").forEach(b => b.addEventListener("click", () => {
+      const track = $("#homeGalleryTrack"); if (!track) return;
+      track.scrollBy({ left: Number(b.dataset.scroll) * 300, behavior: "smooth" });
+    }));
+
+    // ---- Lightbox ----
+    const lightbox = $("#lightbox");
+    if (lightbox) {
+      const list = window.__eloLightboxList || [];
+      let idx = 0;
+      const imgEl = $("#lightboxImg"), capEl = $("#lightboxCaption");
+      function show(i) {
+        idx = (i + list.length) % list.length;
+        const it = list[idx];
+        imgEl.src = it.img; imgEl.alt = it.title || "";
+        capEl.textContent = (it.title || "") + (it.event ? " · " + it.event : "");
+      }
+      $$("[data-lightbox-trigger]").forEach(t => t.addEventListener("click", () => {
+        show(Number(t.dataset.galleryIndex)); lightbox.classList.add("open"); document.body.style.overflow = "hidden";
+      }));
+      function closeLb() { lightbox.classList.remove("open"); document.body.style.overflow = ""; }
+      $("#lightboxClose").addEventListener("click", closeLb);
+      lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLb(); });
+      $("#lightboxPrev").addEventListener("click", () => show(idx - 1));
+      $("#lightboxNext").addEventListener("click", () => show(idx + 1));
+      document.addEventListener("keydown", function lbKey(e) {
+        if (!lightbox.classList.contains("open")) return;
+        if (e.key === "Escape") closeLb();
+        if (e.key === "ArrowLeft") show(idx - 1);
+        if (e.key === "ArrowRight") show(idx + 1);
+      });
+    }
+
+    // ---- Event detail modal ----
+    const evModalBackdrop = $("#eventModalBackdrop");
+    if (evModalBackdrop) {
+      $$("[data-event-detail]").forEach(b => b.addEventListener("click", () => {
+        const ev = getEvents().find(e => String(e.id) === b.dataset.eventDetail);
+        if (!ev) return;
+        $("#eventModalTitle").textContent = ev.title;
+        $("#eventModalBody").innerHTML = `
+          <img src="${ev.cover}" alt="" style="width:100%;border-radius:12px;margin-bottom:1rem;aspect-ratio:16/9;object-fit:cover">
+          <p style="color:var(--text-soft);margin-bottom:.8rem">${escapeHtml(ev.desc)}</p>
+          <p style="font-size:.88rem;display:flex;gap:.5rem;align-items:center;margin-bottom:.4rem">${icon("calendar",15)} ${fmtDate(ev.date)}</p>
+          <p style="font-size:.88rem;display:flex;gap:.5rem;align-items:center">${icon("pin",15)} ${escapeHtml(ev.place)}</p>
+        `;
+        evModalBackdrop.classList.add("open");
+      }));
+      evModalBackdrop.addEventListener("click", (e) => { if (e.target === evModalBackdrop || e.target.closest("[data-close-modal]")) evModalBackdrop.classList.remove("open"); });
+    }
+
+    // ---- Share buttons ----
+    $$("[data-share]").forEach(b => b.addEventListener("click", async () => {
+      const shareData = { title: b.dataset.share, text: b.dataset.share, url: location.href };
+      if (navigator.share) { try { await navigator.share(shareData); } catch (e) {} }
+      else { try { await navigator.clipboard.writeText(location.href); toast("Link copiado para a área de transferência."); } catch (e) { toast("Não foi possível copiar o link.", "error"); } }
+    }));
+
+    // ---- Participate form ----
+    const pForm = $("#participateForm");
+    if (pForm) {
+      pForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let valid = true;
+        ["nome", "turma", "email", "mensagem"].forEach(name => {
+          const input = pForm.elements[name];
+          const field = pForm.closest("form").querySelector(`[data-field="${name}"]`) || input.closest(".field");
+          const ok = name === "email" ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim()) : input.value.trim().length > 0;
+          field.classList.toggle("invalid", !ok);
+          if (!ok) valid = false;
+        });
+        if (!valid) return;
+        const data = {
+          nome: pForm.elements.nome.value.trim(),
+          turma: pForm.elements.turma.value.trim(),
+          email: pForm.elements.email.value.trim(),
+          categoria: pForm.elements.categoria.value,
+          mensagem: pForm.elements.mensagem.value.trim(),
+          date: new Date().toISOString()
+        };
+        const subs = Store.get("submissions", []);
+        subs.push(data);
+        Store.set("submissions", subs);
+        $("#participateFormWrap").style.display = "none";
+        $("#participateSuccess").classList.add("show");
+      });
+    }
+    const again = $("#participateAgain");
+    if (again) again.addEventListener("click", () => {
+      $("#participateForm").reset();
+      $$(".field", $("#participateForm")).forEach(f => f.classList.remove("invalid"));
+      $("#participateSuccess").classList.remove("show");
+      $("#participateFormWrap").style.display = "";
+    });
+
+    // ---- Admin login ----
+    const loginForm = $("#adminLoginForm");
+    if (loginForm) {
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const pass = loginForm.elements.pass.value;
+        const field = loginForm.querySelector('[data-field="pass"]');
+        if (pass === "elo2027") {
+          sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
+          toast("Login realizado (modo demonstração).");
+          navigate();
+        } else {
+          field.classList.add("invalid");
+        }
+      });
+    }
+
+    // ---- Admin panel ----
+    const adminLogout = $("#adminLogout");
+    if (adminLogout) adminLogout.addEventListener("click", () => { sessionStorage.removeItem(ADMIN_SESSION_KEY); navigate(); });
+
+    $$("[data-admin-tab]").forEach(b => b.addEventListener("click", () => {
+      $$("[data-admin-tab]").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      $("#adminPanelBody").innerHTML = renderAdminTabBody(b.dataset.adminTab);
+      bindAdminTabEvents(b.dataset.adminTab);
+    }));
+    const firstTabBody = $("#adminPanelBody");
+    if (firstTabBody) bindAdminTabEvents("news");
+
+    // ---- Newsletter (footer) ----
+    const nlForm = $("#newsletterForm");
+    if (nlForm && !nlForm.dataset.bound) {
+      nlForm.dataset.bound = "1";
+      nlForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = $("#newsletterEmail").value.trim();
+        const msgEl = $(".newsletter-msg", nlForm);
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msgEl.textContent = "Informe um e-mail válido."; return; }
+        msgEl.textContent = "Inscrição registrada neste navegador (demonstração).";
+        nlForm.reset();
+      });
+    }
+  }
+
+  function bindAdminTabEvents(tab) {
+    const addBtn = $("#adminAddBtn");
+    if (addBtn) addBtn.addEventListener("click", () => openAdminModal(tab, null));
+    $$("[data-edit]").forEach(b => b.addEventListener("click", () => {
+      const [coll, id] = b.dataset.edit.split(":");
+      const item = Store.get(coll, []).find(x => String(x.id ?? x.slug) === id);
+      openAdminModal(coll, item);
+    }));
+    $$("[data-del]").forEach(b => b.addEventListener("click", () => {
+      const [coll, id] = b.dataset.del.split(":");
+      if (!confirm("Tem certeza que deseja excluir este item? Essa ação não pode ser desfeita.")) return;
+      const list = Store.get(coll, []).filter(x => String(x.id ?? x.slug) !== id);
+      Store.set(coll, list);
+      $("#adminPanelBody").innerHTML = renderAdminTabBody(coll);
+      bindAdminTabEvents(coll);
+      toast("Item excluído.");
+    }));
+  }
+
+  const FORM_FIELDS = {
+    news: [["title", "Título"], ["category", "Categoria"], ["date", "Data", "date"], ["excerpt", "Resumo", "textarea"]],
+    events: [["title", "Título"], ["category", "Categoria"], ["date", "Data", "date"], ["place", "Local"], ["desc", "Descrição", "textarea"]],
+    proposals: [["name", "Nome"], ["category", "Categoria"], ["status", "Status", "select", ["planejamento", "andamento", "concluido", "suspenso"]], ["progress", "Progresso (%)", "number"], ["desc", "Descrição", "textarea"]],
+    gallery: [["title", "Título"], ["category", "Categoria"], ["event", "Evento"]],
+    members: [["name", "Nome"], ["role", "Cargo"], ["dept", "Departamento"], ["desc", "Descrição", "textarea"]]
+  };
+  function openAdminModal(coll, item) {
+    const backdrop = $("#adminModalBackdrop");
+    const fields = FORM_FIELDS[coll];
+    $("#adminModalTitle").textContent = item ? "Editar item" : "Adicionar item";
+    $("#adminModalBody").innerHTML = `
+      <form id="adminItemForm">
+        ${fields.map(([name, label, type, options]) => {
+          const val = item ? (item[name] ?? "") : "";
+          if (type === "textarea") return `<div class="field"><label>${label}</label><textarea name="${name}">${escapeHtml(val)}</textarea></div>`;
+          if (type === "select") return `<div class="field"><label>${label}</label><select name="${name}">${options.map(o => `<option value="${o}" ${val === o ? "selected" : ""}>${statusLabel(o)}</option>`).join("")}</select></div>`;
+          return `<div class="field"><label>${label}</label><input name="${name}" type="${type || "text"}" value="${escapeHtml(val)}"></div>`;
+        }).join("")}
+        <div class="demo-banner" style="margin-top:1rem">${icon("info",16)} Imagens/fotos reais exigem upload para um armazenamento real (ex.: Supabase Storage) — aqui, novos itens usam uma imagem ilustrativa automática.</div>
+        <div class="form-actions"><button type="submit" class="btn btn-secondary">Salvar</button></div>
+      </form>`;
+    backdrop.classList.add("open");
+    $("#adminItemForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const obj = item ? Object.assign({}, item) : {};
+      fields.forEach(([name]) => { obj[name] = fd.get(name); });
+      if (coll === "proposals") obj.progress = Number(obj.progress) || 0;
+      if (!item) {
+        obj.id = Date.now();
+        obj.demo = true;
+        if (coll === "news") { obj.slug = (obj.title || "nova-noticia").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-" + obj.id; obj.cover = "fotos/adicione-capa-noticia.jpg"; obj.body = [obj.excerpt || ""]; } // coloque a imagem em /fotos/
+        if (coll === "events") obj.cover = "fotos/adicione-capa-evento.jpg"; // coloque a imagem em /fotos/
+        if (coll === "gallery") { obj.img = "fotos/adicione-foto-galeria.jpg"; obj.tall = false; }
+        if (coll === "members") obj.img = "fotos/adicione-foto-integrante.jpg";
+      }
+      const list = Store.get(coll, []);
+      const idKey = coll === "news" ? "slug" : "id";
+      const existingIdx = list.findIndex(x => String(x[idKey]) === String(obj[idKey]));
+      if (existingIdx > -1) list[existingIdx] = obj; else list.push(obj);
+      Store.set(coll, list);
+      backdrop.classList.remove("open");
+      $("#adminPanelBody").innerHTML = renderAdminTabBody(coll);
+      bindAdminTabEvents(coll);
+      toast("Item salvo com sucesso.");
+    });
+  }
+  document.addEventListener("click", (e) => {
+    const backdrop = $("#adminModalBackdrop");
+    if (backdrop && (e.target === backdrop || e.target.closest("[data-close-admin-modal]"))) backdrop.classList.remove("open");
+  });
+
+  /* ---------------------------------------------------------
+     INIT
+     --------------------------------------------------------- */
+  $("#year").textContent = new Date().getFullYear();
+  revealObserve(document.querySelector(".site-footer")); // footer lives outside #main, so it needs its own observer
+  if (!location.hash) location.hash = "#/";
+  navigate();
+})();
+
+</script>
+</body>
+</html>
