@@ -1055,7 +1055,7 @@ html{scroll-behavior:smooth;}
         <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube do Grêmio ELO">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M10 9.5l5 2.5-5 2.5v-5z" fill="currentColor"/></svg>
         </a>
-        <a href="mailto:EX contato@gremioelo.com.br" aria-label="E-mail institucional">
+        <a href="mailto:contato@gremioelo.com.br" aria-label="E-mail institucional">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 6.5l8.5 7 8.5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </a>
       </div>
@@ -1087,9 +1087,10 @@ html{scroll-behavior:smooth;}
      ============================================================= -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = "https://jagdcqhaxqrnkvxlqpgh.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_hlbo-4KNjx_2w5pEYDT_8Q_hJPzaZgg";
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.ELO_SUPABASE_CONFIG = {
+    url: "https://jagdcqhaxqrnkvxlqpgh.supabase.co",
+    key: "sb_publishable_hlbo-4KNjx_2w5pEYDT_8Q_hJPzaZgg"
+  };
 </script>
 
 <script>
@@ -1250,13 +1251,9 @@ const MEMBERS = [
 <script>
 /* ============================================================
    GRÊMIO ESTUDANTIL ELO — App (router + páginas + interações)
-   Site estático, front-end. Não há servidor real conectado:
-   os dados de "notícias", "eventos", "propostas", "galeria" e
-   "integrantes" são de demonstração, e a área administrativa
-   grava alterações apenas no navegador (localStorage), para
-   ilustrar o fluxo de um painel de gestão. Uma integração real
-   com Supabase (banco de dados, autenticação e storage) precisa
-   das credenciais do projeto do usuário — ver aviso na página /admin.
+   Front-end estático conectado ao Supabase: Auth + Database.
+   O conteúdo público e o painel administrativo usam dados reais.
+   As imagens devem ser URLs públicas do Supabase Storage ou URLs externas.
    ============================================================ */
 
 (function () {
@@ -1266,66 +1263,93 @@ const MEMBERS = [
   const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
   const main = $("#main");
 
-  /* ---------------------------------------------------------
-     STORAGE (demo "backend" local — não é persistência real/servidor)
-     --------------------------------------------------------- */
-    const DATA = { news: [], events: [], proposals: [], members: [], gallery: [], submissions: [] };
+  /* SUPABASE REAL */
+  if (!window.supabase?.createClient || !window.ELO_SUPABASE_CONFIG?.url || !window.ELO_SUPABASE_CONFIG?.key) {
+    document.body.innerHTML = '<main style="font:16px Arial;padding:2rem">Não foi possível iniciar o site. Atualize a página e confira sua conexão.</main>';
+    throw new Error("Supabase JS/configuração indisponível.");
+  }
+  const supabase = window.supabase.createClient(window.ELO_SUPABASE_CONFIG.url, window.ELO_SUPABASE_CONFIG.key, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  });
+  const DATA = { news: [], events: [], proposals: [], members: [], gallery: [], submissions: [] };
+  const TABLES = { news:"news", events:"events", proposals:"proposals", members:"members", gallery:"gallery" };
+  let currentSession = null, isVerifiedAdmin = false;
 
+  function dbError(error, action) {
+    console.error("[ELO/Supabase]", action, error);
+    toast(action + ": " + (error?.message || "verifique a conexão e as permissões"), "error");
+  }
   async function fetchTable(table, order) {
     let q = supabase.from(table).select("*");
     if (order) q = q.order(order.col, { ascending: order.asc });
     const { data, error } = await q;
-    if (error) { console.error(table, error); toast("Erro ao carregar " + table + ".", "error"); return []; }
+    if (error) throw error;
     return data || [];
   }
-
   async function loadAllData() {
-    const [news, events, proposals, members, gallery] = await Promise.all([
-      fetchTable("news", { col: "date", asc: false }),
-      fetchTable("events", { col: "date", asc: true }),
-      fetchTable("proposals"),
-      fetchTable("members"),
-      fetchTable("gallery")
-    ]);
-    DATA.news = news; DATA.events = events; DATA.proposals = proposals; DATA.members = members; DATA.gallery = gallery;
+    const jobs = Object.keys(TABLES).map(async name => {
+      try {
+        const order = name === "news" ? {col:"date",asc:false} : name === "events" ? {col:"date",asc:true} : null;
+        DATA[name] = await fetchTable(TABLES[name], order);
+      } catch (e) {
+        console.error("Falha ao carregar " + name, e);
+        DATA[name] = [];
+      }
+    });
+    await Promise.all(jobs);
+    try { DATA.submissions = await fetchTable("suggestions", {col:"created_at",asc:false}); }
+    catch (e) { console.error("Falha ao carregar sugestões", e); DATA.submissions = []; }
   }
-
-  function getNews() { return DATA.news; }
-  function getEvents() { return DATA.events.slice().sort((a, b) => a.date.localeCompare(b.date)); }
-  function getProposals() { return DATA.proposals; }
-  function getMembers() { return DATA.members; }
-  function getGallery() { return DATA.gallery; }
-
-  let currentSession = null;
-  let isVerifiedAdmin = false;
+  const Store = {
+    get(name, fallback) { return Array.isArray(DATA[name]) ? DATA[name] : (fallback || []); },
+    set(name, value) { DATA[name] = Array.isArray(value) ? value : []; }
+  };
+  function getNews(){ return DATA.news; }
+  function getEvents(){ return DATA.events.slice().sort((a,b)=>String(a.date||"").localeCompare(String(b.date||""))); }
+  function getProposals(){ return DATA.proposals; }
+  function getMembers(){ return DATA.members; }
+  function getGallery(){ return DATA.gallery; }
 
   async function checkIsAdmin(userId) {
-    const { data } = await supabase.from("admin_users").select("user_id").eq("user_id", userId).maybeSingle();
+    if (!userId) return false;
+    const { data, error } = await supabase.from("admin_users").select("user_id").eq("user_id",userId).maybeSingle();
+    if (error) { console.error("Verificação admin:",error); return false; }
     return !!data;
   }
-
   async function refreshSession() {
-    const { data } = await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
     currentSession = data.session;
     isVerifiedAdmin = currentSession ? await checkIsAdmin(currentSession.user.id) : false;
   }
+  function isAdminLogged(){ return !!(currentSession && isVerifiedAdmin); }
 
   supabase.auth.onAuthStateChange((_event, session) => {
     currentSession = session;
-    (async () => {
+    Promise.resolve().then(async()=>{
       isVerifiedAdmin = session ? await checkIsAdmin(session.user.id) : false;
       if (parseHash().path.startsWith("/admin")) navigate();
-    })();
+    });
   });
 
-  function isAdminLogged() { return !!(currentSession && isVerifiedAdmin); }
-  seed();
-
-  function getNews() { return Store.get("news", []); }
-  function getEvents() { return Store.get("events", []).slice().sort((a, b) => a.date.localeCompare(b.date)); }
-  function getProposals() { return Store.get("proposals", []); }
-  function getMembers() { return Store.get("members", []); }
-  function getGallery() { return Store.get("gallery", []); }
+  async function saveRecord(collection,item) {
+    const table=TABLES[collection];
+    if(!table) throw new Error("Tabela inválida.");
+    const payload={...item};
+    delete payload.demo;
+    const {data,error}=await supabase.from(table).upsert(payload).select().single();
+    if(error) throw error;
+    const key=collection==="news"?"slug":"id";
+    const idx=DATA[collection].findIndex(x=>String(x[key])===String(data[key]));
+    if(idx>=0) DATA[collection][idx]=data; else DATA[collection].push(data);
+    return data;
+  }
+  async function deleteRecord(collection,id) {
+    const table=TABLES[collection], key=collection==="news"?"slug":"id";
+    const {error}=await supabase.from(table).delete().eq(key,id);
+    if(error) throw error;
+    DATA[collection]=DATA[collection].filter(x=>String(x[key])!==String(id));
+  }
 
   /* ---------------------------------------------------------
      HELPERS
@@ -1954,7 +1978,7 @@ const MEMBERS = [
           <div class="form-success" id="participateSuccess">
             ${icon("check",28)}
             <h3>Sugestão enviada!</h3>
-            <p>Obrigado por participar. Sua mensagem foi registrada (demonstração local, salva neste navegador) e será analisada pela diretoria do Grêmio.</p>
+            <p>Obrigado por participar. Sua mensagem foi enviada e registrada para análise da diretoria do Grêmio.</p>
             <button type="button" class="btn btn-outline mt-lg" id="participateAgain">Enviar outra sugestão</button>
           </div>
         </div>
@@ -1966,7 +1990,6 @@ const MEMBERS = [
      PAGE: ADMIN
      --------------------------------------------------------- */
     function renderAdmin() {
-  function renderAdmin() {
     if (!isAdminLogged()) return renderAdminLogin();
     return renderAdminPanel("news");
   }
@@ -1978,17 +2001,18 @@ const MEMBERS = [
           <div style="display:flex;justify-content:center;color:var(--vinho);margin-bottom:1rem">${icon("lock",22)}</div>
           <h2>Acesso administrativo</h2>
           <p class="sub">Painel restrito à diretoria do Grêmio Estudantil ELO.</p>
-          <div class="demo-banner">${icon("info",17)}<span><strong>Modo de demonstração:</strong> este painel não está conectado a um banco de dados real. Use a senha de demonstração <strong>elo2027</strong> para explorar a interface. Nenhuma autenticação segura real está ativa.</span></div>
+          <div class="demo-banner">${icon("lock",17)}<span><strong>Acesso protegido:</strong> entre com o e-mail e a senha cadastrados no Supabase Authentication. Somente usuários autorizados em <strong>admin_users</strong> podem acessar.</span></div>
           <form id="adminLoginForm" novalidate>
             <div class="form-grid">
-              <div class="field" data-field="user">
-                <label for="aUser">Usuário</label>
-                <input id="aUser" name="user" type="text" autocomplete="username" placeholder="admin" required>
+              <div class="field" data-field="email">
+                <label for="aEmail">E-mail</label>
+                <input id="aEmail" name="email" type="email" autocomplete="username" placeholder="seu@email.com" required>
+                <span class="error">Informe um e-mail válido.</span>
               </div>
               <div class="field" data-field="pass">
                 <label for="aPass">Senha</label>
                 <input id="aPass" name="pass" type="password" autocomplete="current-password" required>
-                <span class="error">Senha incorreta. Dica: 7</span>
+                <span class="error">Confira sua senha.</span>
               </div>
             </div>
             <div class="form-actions" style="justify-content:center;margin-top:1.4rem">
@@ -2013,7 +2037,7 @@ const MEMBERS = [
     return `
     <section class="admin-shell section">
       <div class="container">
-        <div class="demo-banner reveal">${icon("info",17)}<span><strong>Painel de demonstração:</strong> as alterações feitas aqui são salvas apenas neste navegador (localStorage), para ilustrar o fluxo de gestão de conteúdo. Para publicar de verdade (com banco de dados, autenticação e upload de imagens), é necessário conectar um backend real — por exemplo, um projeto Supabase com as credenciais da escola.</span></div>
+        <div class="demo-banner reveal">${icon("check",17)}<span><strong>Painel conectado:</strong> alterações confirmadas são gravadas no banco Supabase e ficam disponíveis aos visitantes.</span></div>
         <div class="admin-layout">
           <nav class="admin-side">
             ${ADMIN_TABS.map(t => `<button type="button" class="${t.id === tab ? "active" : ""}" data-admin-tab="${t.id}">${icon(t.icon,16)} ${t.label}</button>`).join("")}
@@ -2051,9 +2075,9 @@ const MEMBERS = [
       <tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${escapeHtml(m.role)}</td><td>${escapeHtml(m.dept)}</td>
       <td><div class="admin-row-actions"><button class="icon-btn" data-edit="members:${m.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="members:${m.id}">${icon("trash")}</button></div></td></tr>`).join("");
     if (tab === "submissions") {
-      const subs = Store.get("submissions", []);
-      rows = subs.slice().reverse().map((s, i) => `
-        <tr><td><strong>${escapeHtml(s.nome)}</strong><br><small style="color:var(--text-soft)">${escapeHtml(s.email)}</small></td><td>${escapeHtml(s.categoria)}</td><td style="max-width:280px">${escapeHtml(s.mensagem).slice(0, 80)}${s.mensagem.length > 80 ? "…" : ""}</td><td>${new Date(s.date).toLocaleDateString("pt-BR")}</td></tr>`).join("");
+      const subs = DATA.submissions || [];
+      rows = subs.map(s => `
+        <tr><td><strong>${escapeHtml(s.nome)}</strong><br><small style="color:var(--text-soft)">${escapeHtml(s.email)}</small></td><td>${escapeHtml(s.categoria)}</td><td style="max-width:280px">${escapeHtml(s.mensagem).slice(0, 80)}${s.mensagem.length > 80 ? "…" : ""}</td><td>${new Date(s.created_at || s.date || Date.now()).toLocaleDateString("pt-BR")}</td></tr>`).join("");
     }
     const cols = tab === "submissions"
       ? ["Nome / e-mail", "Categoria", "Mensagem", "Data"]
@@ -2189,7 +2213,7 @@ const MEMBERS = [
     // ---- Participate form ----
     const pForm = $("#participateForm");
     if (pForm) {
-      pForm.addEventListener("submit", (e) => {
+      pForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         let valid = true;
         ["nome", "turma", "email", "mensagem"].forEach(name => {
@@ -2208,11 +2232,19 @@ const MEMBERS = [
           mensagem: pForm.elements.mensagem.value.trim(),
           date: new Date().toISOString()
         };
-        const subs = Store.get("submissions", []);
-        subs.push(data);
-        Store.set("submissions", subs);
-        $("#participateFormWrap").style.display = "none";
-        $("#participateSuccess").classList.add("show");
+        const sendBtn=pForm.querySelector('button[type="submit"]');
+        sendBtn.disabled=true; sendBtn.textContent="Enviando...";
+        try {
+          const {error}=await supabase.from("suggestions").insert({
+            nome:data.nome, turma:data.turma, email:data.email,
+            categoria:data.categoria, mensagem:data.mensagem
+          });
+          if(error) throw error;
+          DATA.submissions.push(data);
+          $("#participateFormWrap").style.display="none";
+          $("#participateSuccess").classList.add("show");
+        } catch(err){ dbError(err,"Não foi possível enviar a sugestão"); }
+        finally { sendBtn.disabled=false; sendBtn.textContent="Enviar sugestão"; }
       });
     }
     const again = $("#participateAgain");
@@ -2223,26 +2255,38 @@ const MEMBERS = [
       $("#participateFormWrap").style.display = "";
     });
 
-    // ---- Admin login ----
+    // ---- Login Supabase Auth ----
     const loginForm = $("#adminLoginForm");
-    if (loginForm) {
-      loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const pass = loginForm.elements.pass.value;
-        const field = loginForm.querySelector('[data-field="pass"]');
-        if (pass === "elo2027") {
-          sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
-          toast("Login realizado (modo demonstração).");
-          navigate();
-        } else {
-          field.classList.add("invalid");
+    if (loginForm) loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email=loginForm.elements.email.value.trim(), password=loginForm.elements.pass.value;
+      const emailField=loginForm.querySelector('[data-field="email"]');
+      const passField=loginForm.querySelector('[data-field="pass"]');
+      emailField.classList.toggle("invalid",!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+      passField.classList.toggle("invalid",!password);
+      if(!email||!password) return;
+      const btn=loginForm.querySelector('button[type="submit"]');
+      btn.disabled=true; btn.textContent="Verificando...";
+      try {
+        const {error}=await supabase.auth.signInWithPassword({email,password});
+        if(error) throw error;
+        await refreshSession();
+        if(!isAdminLogged()){
+          await supabase.auth.signOut();
+          throw new Error("Usuário sem permissão. Confira se o UUID do usuário está em admin_users.");
         }
-      });
-    }
+        toast("Acesso administrativo autorizado."); navigate();
+      } catch(err){ passField.classList.add("invalid"); dbError(err,"Falha no login"); }
+      finally { btn.disabled=false; btn.textContent="Entrar"; }
+    });
 
     // ---- Admin panel ----
     const adminLogout = $("#adminLogout");
-    if (adminLogout) adminLogout.addEventListener("click", () => { sessionStorage.removeItem(ADMIN_SESSION_KEY); navigate(); });
+    if (adminLogout) adminLogout.addEventListener("click", async () => {
+      const {error}=await supabase.auth.signOut();
+      if(error) dbError(error,"Falha ao sair");
+      currentSession=null; isVerifiedAdmin=false; navigate();
+    });
 
     $$("[data-admin-tab]").forEach(b => b.addEventListener("click", () => {
       $$("[data-admin-tab]").forEach(x => x.classList.remove("active"));
@@ -2262,8 +2306,8 @@ const MEMBERS = [
         const email = $("#newsletterEmail").value.trim();
         const msgEl = $(".newsletter-msg", nlForm);
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msgEl.textContent = "Informe um e-mail válido."; return; }
-        msgEl.textContent = "Inscrição registrada neste navegador (demonstração).";
-        nlForm.reset();
+        msgEl.textContent = "A inscrição por e-mail ainda não está habilitada.";
+        toast("O cadastro de novidades ainda não foi conectado ao banco.", "error");
       });
     }
   }
@@ -2276,23 +2320,24 @@ const MEMBERS = [
       const item = Store.get(coll, []).find(x => String(x.id ?? x.slug) === id);
       openAdminModal(coll, item);
     }));
-    $$("[data-del]").forEach(b => b.addEventListener("click", () => {
-      const [coll, id] = b.dataset.del.split(":");
-      if (!confirm("Tem certeza que deseja excluir este item? Essa ação não pode ser desfeita.")) return;
-      const list = Store.get(coll, []).filter(x => String(x.id ?? x.slug) !== id);
-      Store.set(coll, list);
-      $("#adminPanelBody").innerHTML = renderAdminTabBody(coll);
-      bindAdminTabEvents(coll);
-      toast("Item excluído.");
+    $$("[data-del]").forEach(b => b.addEventListener("click", async () => {
+      const [coll,id]=b.dataset.del.split(":");
+      if(!confirm("Tem certeza que deseja excluir este item? Essa ação não pode ser desfeita.")) return;
+      b.disabled=true;
+      try {
+        await deleteRecord(coll,id);
+        $("#adminPanelBody").innerHTML=renderAdminTabBody(coll);
+        bindAdminTabEvents(coll); toast("Item excluído do banco.");
+      } catch(err){ dbError(err,"Não foi possível excluir"); b.disabled=false; }
     }));
   }
 
   const FORM_FIELDS = {
-    news: [["title", "Título"], ["category", "Categoria"], ["date", "Data", "date"], ["excerpt", "Resumo", "textarea"]],
-    events: [["title", "Título"], ["category", "Categoria"], ["date", "Data", "date"], ["place", "Local"], ["desc", "Descrição", "textarea"]],
-    proposals: [["name", "Nome"], ["category", "Categoria"], ["status", "Status", "select", ["planejamento", "andamento", "concluido", "suspenso"]], ["progress", "Progresso (%)", "number"], ["desc", "Descrição", "textarea"]],
-    gallery: [["title", "Título"], ["category", "Categoria"], ["event", "Evento"]],
-    members: [["name", "Nome"], ["role", "Cargo"], ["dept", "Departamento"], ["desc", "Descrição", "textarea"]]
+    news: [["title","Título"],["category","Categoria"],["date","Data","date"],["excerpt","Resumo","textarea"],["cover","URL da capa"],["body","Texto da notícia","textarea"]],
+    events: [["title","Título"],["category","Categoria"],["date","Data","date"],["place","Local"],["desc","Descrição","textarea"],["cover","URL da imagem"]],
+    proposals: [["name","Nome"],["category","Categoria"],["status","Status","select",["planejamento","andamento","concluido","suspenso"]],["progress","Progresso (%)","number"],["desc","Descrição","textarea"]],
+    gallery: [["title","Título"],["category","Categoria"],["event","Evento"],["img","URL da imagem"]],
+    members: [["name","Nome"],["role","Cargo"],["dept","Departamento"],["desc","Descrição","textarea"],["img","URL da foto"]]
   };
   function openAdminModal(coll, item) {
     const backdrop = $("#adminModalBackdrop");
@@ -2310,29 +2355,31 @@ const MEMBERS = [
         <div class="form-actions"><button type="submit" class="btn btn-secondary">Salvar</button></div>
       </form>`;
     backdrop.classList.add("open");
-    $("#adminItemForm").addEventListener("submit", (e) => {
+    $("#adminItemForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       const obj = item ? Object.assign({}, item) : {};
       fields.forEach(([name]) => { obj[name] = fd.get(name); });
       if (coll === "proposals") obj.progress = Number(obj.progress) || 0;
+      if (coll === "news") {
+        obj.slug = item?.slug || (obj.title || "noticia").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") + "-" + Date.now();
+        obj.body = String(obj.body || obj.excerpt || "").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+      }
       if (!item) {
-        obj.id = Date.now();
-        obj.demo = true;
         if (coll === "news") { obj.slug = (obj.title || "nova-noticia").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-" + obj.id; obj.cover = "fotos/adicione-capa-noticia.jpg"; obj.body = [obj.excerpt || ""]; } // coloque a imagem em /fotos/
         if (coll === "events") obj.cover = "fotos/adicione-capa-evento.jpg"; // coloque a imagem em /fotos/
         if (coll === "gallery") { obj.img = "fotos/adicione-foto-galeria.jpg"; obj.tall = false; }
         if (coll === "members") obj.img = "fotos/adicione-foto-integrante.jpg";
       }
-      const list = Store.get(coll, []);
-      const idKey = coll === "news" ? "slug" : "id";
-      const existingIdx = list.findIndex(x => String(x[idKey]) === String(obj[idKey]));
-      if (existingIdx > -1) list[existingIdx] = obj; else list.push(obj);
-      Store.set(coll, list);
-      backdrop.classList.remove("open");
-      $("#adminPanelBody").innerHTML = renderAdminTabBody(coll);
-      bindAdminTabEvents(coll);
-      toast("Item salvo com sucesso.");
+      const saveBtn=e.target.querySelector('button[type="submit"]');
+      saveBtn.disabled=true; saveBtn.textContent="Salvando...";
+      try {
+        await saveRecord(coll,obj);
+        backdrop.classList.remove("open");
+        $("#adminPanelBody").innerHTML=renderAdminTabBody(coll);
+        bindAdminTabEvents(coll); toast("Item salvo no Supabase.");
+      } catch(err){ dbError(err,"Não foi possível salvar"); }
+      finally { saveBtn.disabled=false; saveBtn.textContent="Salvar"; }
     });
   }
   document.addEventListener("click", (e) => {
@@ -2346,7 +2393,11 @@ const MEMBERS = [
   $("#year").textContent = new Date().getFullYear();
   revealObserve(document.querySelector(".site-footer")); // footer lives outside #main, so it needs its own observer
   if (!location.hash) location.hash = "#/";
-  navigate();
+  (async function bootElo(){
+    try { await refreshSession(); await loadAllData(); }
+    catch(err){ console.error("[ELO] Inicialização:",err); toast("Falha ao conectar ao Supabase. Verifique a internet e as permissões.", "error"); }
+    finally { navigate(); }
+  })();
 })();
 
 </script>
