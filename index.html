@@ -232,7 +232,9 @@ p{ margin:0; }
 .menu-toggle:focus-visible{ outline:3px solid var(--dourado); outline-offset:3px; }
 
 .mobile-nav{
-  position:fixed; inset: var(--header-h) 0 0 0; z-index:400;
+  position:absolute; top:100%; left:0; right:0; z-index:400;
+height: calc(100vh - var(--header-h));
+height: calc(100dvh - var(--header-h));
   background: var(--vinho-escuro);
   transform: translateY(-12px); opacity:0; visibility:hidden;
   transition: transform .35s var(--ease), opacity .35s var(--ease), visibility .35s var(--ease);
