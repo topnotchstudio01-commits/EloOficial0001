@@ -1269,27 +1269,56 @@ const MEMBERS = [
   /* ---------------------------------------------------------
      STORAGE (demo "backend" local — não é persistência real/servidor)
      --------------------------------------------------------- */
-  const Store = {
-    get(key, fallback) {
-      try {
-        const raw = localStorage.getItem("elo_" + key);
-        return raw ? JSON.parse(raw) : fallback;
-      } catch (e) { return fallback; }
-    },
-    set(key, value) {
-      try { localStorage.setItem("elo_" + key, JSON.stringify(value)); return true; }
-      catch (e) { return false; }
-    }
-  };
+    const DATA = { news: [], events: [], proposals: [], members: [], gallery: [], submissions: [] };
 
-  function seed() {
-    if (!Store.get("news")) Store.set("news", window.ELO_DATA.NEWS);
-    if (!Store.get("events")) Store.set("events", window.ELO_DATA.EVENTS);
-    if (!Store.get("proposals")) Store.set("proposals", window.ELO_DATA.PROPOSALS);
-    if (!Store.get("members")) Store.set("members", window.ELO_DATA.MEMBERS);
-    if (!Store.get("gallery")) Store.set("gallery", window.ELO_DATA.GALLERY);
-    if (!Store.get("submissions")) Store.set("submissions", []);
+  async function fetchTable(table, order) {
+    let q = supabase.from(table).select("*");
+    if (order) q = q.order(order.col, { ascending: order.asc });
+    const { data, error } = await q;
+    if (error) { console.error(table, error); toast("Erro ao carregar " + table + ".", "error"); return []; }
+    return data || [];
   }
+
+  async function loadAllData() {
+    const [news, events, proposals, members, gallery] = await Promise.all([
+      fetchTable("news", { col: "date", asc: false }),
+      fetchTable("events", { col: "date", asc: true }),
+      fetchTable("proposals"),
+      fetchTable("members"),
+      fetchTable("gallery")
+    ]);
+    DATA.news = news; DATA.events = events; DATA.proposals = proposals; DATA.members = members; DATA.gallery = gallery;
+  }
+
+  function getNews() { return DATA.news; }
+  function getEvents() { return DATA.events.slice().sort((a, b) => a.date.localeCompare(b.date)); }
+  function getProposals() { return DATA.proposals; }
+  function getMembers() { return DATA.members; }
+  function getGallery() { return DATA.gallery; }
+
+  let currentSession = null;
+  let isVerifiedAdmin = false;
+
+  async function checkIsAdmin(userId) {
+    const { data } = await supabase.from("admin_users").select("user_id").eq("user_id", userId).maybeSingle();
+    return !!data;
+  }
+
+  async function refreshSession() {
+    const { data } = await supabase.auth.getSession();
+    currentSession = data.session;
+    isVerifiedAdmin = currentSession ? await checkIsAdmin(currentSession.user.id) : false;
+  }
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    currentSession = session;
+    (async () => {
+      isVerifiedAdmin = session ? await checkIsAdmin(session.user.id) : false;
+      if (parseHash().path.startsWith("/admin")) navigate();
+    })();
+  });
+
+  function isAdminLogged() { return !!(currentSession && isVerifiedAdmin); }
   seed();
 
   function getNews() { return Store.get("news", []); }
@@ -1936,9 +1965,7 @@ const MEMBERS = [
   /* ---------------------------------------------------------
      PAGE: ADMIN
      --------------------------------------------------------- */
-  const ADMIN_SESSION_KEY = "";
-  function isAdminLogged() { return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"; }
-
+    function renderAdmin() {
   function renderAdmin() {
     if (!isAdminLogged()) return renderAdminLogin();
     return renderAdminPanel("news");
