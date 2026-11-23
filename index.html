@@ -677,6 +677,31 @@ height: calc(100dvh - var(--header-h));
 .icon-btn:hover{ background: var(--vinho); color:#fff; }
 .icon-btn.danger:hover{ background:#9b2c2c; }
 .admin-logout{ margin-left:auto; }
+
+/* Responsividade do painel admin */
+.admin-layout > *{ min-width:0; }
+.admin-table td{ overflow-wrap:anywhere; }
+@media (max-width: 899px){
+  .admin-side{ display:flex; gap:.4rem; overflow-x:auto; padding:.5rem; scrollbar-width:none; }
+  .admin-side::-webkit-scrollbar{ display:none; }
+  .admin-side button{ width:auto; flex-shrink:0; white-space:nowrap; }
+  .admin-side .admin-logout{ margin-top:0 !important; border-top:0 !important; padding-top:.75rem !important; }
+}
+@media (max-width: 720px){
+  .admin-panel{ padding:1rem; }
+  .admin-table thead{ display:none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td{ display:block; width:100%; }
+  .admin-table tr{ border:1px solid var(--vinho-10); border-radius:12px; padding:.5rem .9rem; margin-bottom:.8rem; }
+  .admin-table tr:hover td{ background:transparent; }
+  .admin-table td{ border:0; padding:.35rem 0; display:flex; justify-content:space-between; align-items:center; gap:1rem; text-align:right; max-width:none !important; }
+  .admin-table td::before{ content:attr(data-label); font-weight:700; font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-soft); text-align:left; flex-shrink:0; }
+  .admin-table td[data-label="Ações"]{ justify-content:flex-end; padding-top:.6rem; }
+  .admin-table td[data-label="Ações"]::before{ display:none; }
+  .admin-table td[colspan]{ display:block; text-align:center; }
+  .admin-table td[colspan]::before{ display:none; }
+  .admin-login{ padding:1.5rem 1.2rem; }
+  .modal{ padding:1.2rem; }
+}
 .demo-banner{
   background: var(--dourado-30); border: 1px dashed var(--dourado); color: var(--vinho-escuro);
   border-radius: var(--radius-sm); padding: 1rem 1.2rem; font-size:.85rem; margin-bottom: 1.5rem; display:flex; gap:.7rem;
@@ -685,7 +710,7 @@ height: calc(100dvh - var(--header-h));
 /* Modal (admin edit) */
 .modal-backdrop{ position:fixed; inset:0; background: rgba(42,6,9,.55); z-index:2000; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; visibility:hidden; transition: opacity .25s ease, visibility .25s ease; }
 .modal-backdrop.open{ opacity:1; visibility:visible; }
-.modal{ background:#fff; border-radius: var(--radius-lg); max-width: 560px; width:100%; max-height: 88vh; overflow-y:auto; padding: 1.8rem; box-shadow: var(--shadow-lg); }
+.modal{ background:#fff; border-radius: var(--radius-lg); max-width: 560px; width:100%; max-height: 88vh; max-height: 88dvh; overflow-y:auto; padding: 1.8rem; box-shadow: var(--shadow-lg); }
 .modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; }
 .modal-head h3{ color: var(--vinho-escuro); }
 .modal-close{ width:36px; height:36px; border-radius:50%; border:none; background: var(--creme); cursor:pointer; }
@@ -1097,161 +1122,6 @@ html{scroll-behavior:smooth;}
 
 <script>
 /* ============================================================
-   DADOS DE DEMONSTRAÇÃO
-   Tudo aqui é conteúdo de EXEMPLO para fins de demonstração do
-   layout e das funcionalidades. Nenhuma informação real sobre
-   integrantes, eventos ou resultados foi inventada como se fosse
-   verdadeira — todo item é identificado como demonstrativo na
-   interface (ver campo `demo: true` e textos "(exemplo)").
-   ============================================================ */
-
-(function (global) {
-  "use strict";
-
-  // ---- Placeholder visual generator (no external/copyrighted photos) ----
-  function placeholder(label, bg1, bg2) {
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
-        <defs>
-          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="${bg1}"/>
-            <stop offset="1" stop-color="${bg2}"/>
-          </linearGradient>
-        </defs>
-        <rect width="600" height="450" fill="url(#g)"/>
-        <circle cx="300" cy="185" r="70" fill="rgba(255,255,255,0.18)"/>
-        <path d="M230 300 Q300 230 370 300 L370 340 L230 340 Z" fill="rgba(255,255,255,0.18)"/>
-        <text x="300" y="400" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="rgba(255,255,255,0.92)" text-anchor="middle">${label}</text>
-      </svg>`;
-    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
-  }
-
-  const PALETTES = [
-    ["#5E010C", "#8a1c29"], ["#C39C77", "#D6B58A"], ["#360008", "#5E010C"],
-    ["#8a1c29", "#D6B58A"], ["#D6B58A", "#C39C77"], ["#5E010C", "#D6B58A"]
-  ];
-  function img(label, i) {
-    const p = PALETTES[i % PALETTES.length];
-    return placeholder(label, p[0], p[1]);
-  }
-
-  // ---------------- NOTÍCIAS ----------------
-  const NEWS = [
-    {
-      slug: " interclasse-2027",
-      category: "Esporte",
-      title: " Interclasse 2027: esporte, superação e união",
-      excerpt: "Competição reuniu todas as turmas em dois dias de jogos, com direito a torcida organizada e muita superação dentro de quadra.",
-      date: "2027-04-15",
-      cover: img("Notícia · Interclasse", 0),
-      body: [
-        "O Interclasse 2027 (exemplo) reuniu estudantes de todas as turmas em dois dias de competições esportivas organizadas pelo Grêmio ELO.",
-        "Além das partidas de vôlei, handebol e futsal, a programação incluiu apresentações culturais preparadas pelas turmas participantes.",
-        "A diretoria do Grêmio destacou a importância do evento para fortalecer o espírito de equipe e a convivência entre os alunos.",
-        "Este texto é um conteúdo de exemplo criado apenas para demonstrar o layout da página de notícias."
-      ],
-      demo: true
-    },
-    {
-      slug: "roda-de-ideias",
-      category: "Participação",
-      title: "Grêmio Elo promove roda de ideias com os estudantes",
-      excerpt: "Encontro aberto permitiu que alunos sugerissem melhorias para o espaço escolar e debatessem prioridades para o próximo semestre.",
-      date: "2027-04-10",
-      cover: img("Notícia · Roda de Ideias", 1),
-      body: [
-        "A roda de ideias (exemplo) foi criada para dar voz aos estudantes na construção das propostas do Grêmio.",
-        "Durante o encontro, os participantes puderam registrar sugestões que serão avaliadas pela diretoria estudantil.",
-        "A iniciativa deve se tornar um encontro recorrente, de acordo com o planejamento apresentado."
-      ],
-      demo: true
-    },
-    {
-      slug: "novas-propostas",
-      category: "Comunicado",
-      title: "Novas propostas para uma escola ainda melhor!",
-      excerpt: "Conheça as frentes de trabalho que a gestão do Grêmio ELO pretende desenvolver ao longo do ano letivo.",
-      date: "2025-04-08",
-      cover: "fotos/noticia-propostas.jpg",
-      body: [
-        "A gestão do Grêmio ELO (exemplo) apresentou as frentes de trabalho planejadas para o ano letivo.",
-        "As propostas abrangem áreas como infraestrutura, cultura, meio ambiente e bem-estar estudantil.",
-        "Confira a página de Propostas para acompanhar o andamento de cada projeto."
-      ],
-      demo: true
-    },
-    {
-      slug: "semana-da-escola",
-      category: "Evento",
-      title: "Semana da Escola terá programação especial",
-      excerpt: "Atividades culturais, esportivas e educativas vão tomar conta do pátio durante toda a semana comemorativa.",
-      date: "2025-05-02",
-      cover: "fotos/noticia-semana-escola.jpg",
-      body: [
-        "A Semana da Escola (exemplo) contará com atividades culturais, esportivas e educativas abertas a toda a comunidade escolar.",
-        "O Grêmio ELO é responsável pela organização de parte da programação, em parceria com a direção."
-      ],
-      demo: true
-    }
-  ];
-
-  // ---------------- EVENTOS ----------------
-  const EVENTS = [
-    { id: 1, date: "2025-04-25", title: "Interclasse 2025", place: "Ginásio da Escola", category: "Esporte", desc: "Competição esportiva entre as turmas, com jogos de vôlei, futsal e handebol (exemplo).", cover: "fotos/evento-interclasse.jpg" },
-    { id: 2, date: "2025-04-30", title: "Palestra: Saúde Mental", place: "Auditório da escola", category: "Palestra", desc: "Bate-papo aberto sobre saúde mental e bem-estar no ambiente escolar (exemplo).", cover: "fotos/evento-palestra.jpg" },
-    { id: 3, date: "2025-05-10", title: "Semana da Escola", place: "Diversas atividades", category: "Cultural", desc: "Programação especial com atividades culturais e recreativas (exemplo).", cover: "fotos/evento-semana-escola.jpg" },
-    { id: 4, date: "2025-05-22", title: "Feira de Sustentabilidade", place: "Pátio principal", category: "Meio Ambiente", desc: "Estandes com projetos de reciclagem e consumo consciente feitos pelos alunos (exemplo).", cover: "fotos/evento-sustentabilidade.jpg" },
-    { id: 5, date: "2025-06-05", title: "Mostra Cultural ELO", place: "Quadra coberta", category: "Cultural", desc: "Apresentações de música, dança e teatro organizadas pelas turmas (exemplo).", cover: "fotos/evento-mostra-cultural.jpg" }
-  ];
-
-  // ---------------- PROPOSTAS ----------------
-  const PROPOSALS = [
-    { id: 1, name: "Praça de convivência", category: "Infraestrutura", desc: "Criar um espaço de convivência arborizado no pátio para os intervalos (exemplo de proposta).", status: "andamento", progress: 55, updated: "2025-03-20" },
-    { id: 2, name: "Pontos de coleta seletiva", category: "Meio Ambiente", desc: "Instalar lixeiras de coleta seletiva em todos os andares da escola (exemplo de proposta).", status: "concluido", progress: 100, updated: "2025-02-12" },
-    { id: 3, name: "Sarau literário mensal", category: "Cultura", desc: "Promover encontros mensais de leitura e troca de livros entre os estudantes (exemplo de proposta).", status: "planejamento", progress: 10, updated: "2025-04-01" },
-    { id: 4, name: "Torneio intercultural", category: "Esporte", desc: "Organizar um torneio esportivo com temas culturais entre as turmas (exemplo de proposta).", status: "suspenso", progress: 25, updated: "2025-01-18" },
-    { id: 5, name: "Caixa de sugestões digital", category: "Participação", desc: "Formulário permanente para que qualquer estudante envie ideias ao Grêmio (exemplo de proposta).", status: "andamento", progress: 70, updated: "2025-04-05" },
-    { id: 6, name: "Horta escolar", category: "Meio Ambiente", desc: "Implantar uma horta comunitária cuidada pelos estudantes voluntários (exemplo de proposta).", status: "planejamento", progress: 5, updated: "2025-03-28" }
-  ];
-
-
-// ---------------- INTEGRANTES ----------------
-const MEMBERS = [
-  { id: 1, name: "[Nome do presidente]", role: "Presidência", dept: "Presidência", desc: "Responsável pela representação institucional do Grêmio.", img: "fotos/integrante-presidente.jpg" },
-
-  { id: 2, name: "[Thiago]", role: "Vice-presidência", dept: "Presidência", desc: "Apoia a presidência na condução das atividades do Grêmio.", img: "fotos/integrante-vice.jpg" },
-
-  { id: 3, name: "[Nome do secretário]", role: "Secretaria", dept: "Secretaria", desc: "Responsável pelas atas, comunicados e organização documental.", img: "fotos/integrante-secretaria.jpg" },
-
-  { id: 4, name: "[Nome do tesoureiro]", role: "Tesouraria", dept: "Tesouraria", desc: "Responsável pela gestão financeira das atividades do Grêmio.", img: "fotos/integrante-tesouraria.jpg" },
-
-  { id: 5, name: "[Nome do diretor]", role: "Diretoria de Cultura", dept: "Diretorias", desc: "Planeja eventos culturais e artísticos.", img: "fotos/integrante-diretoria-cultura.jpg" },
-
-  { id: 6, name: "[Nome do diretor]", role: "Diretoria de Esportes", dept: "Diretorias", desc: "Organiza competições e atividades esportivas.", img: "fotos/integrante-diretoria-esportes.jpg" },
-
-  { id: 7, name: "[Nome do diretor]", role: "Diretoria de Meio Ambiente", dept: "Diretorias", desc: "Coordena projetos de sustentabilidade na escola.", img: "fotos/integrante-presidente.jpg" },
-
-  { id: 8, name: "[Andressa]", role: "Diretoria de Comunicação", dept: "Diretorias", desc: "Cuida das redes sociais e comunicados oficiais.", img: "fotos/integrante-vice.jpg" }
-];
-
-  // ---------------- GALERIA ----------------
-  const GALLERY = [
-    { id: 1, title: "Interclasse 2025", category: "Esporte", event: "Interclasse 2025", img: "fotos/galeria-interclasse.jpg", tall: true },
-    { id: 2, title: "Reunião do Grêmio", category: "Institucional", event: "Roda de Ideias", img: "fotos/galeria-reuniao.jpg", tall: false },
-    { id: 3, title: "Decoração ELO", category: "Institucional", event: "Lançamento", img: "fotos/galeria-decoracao-elo.jpg", tall: false },
-    { id: 4, title: "Time de vôlei", category: "Esporte", event: "Interclasse 2025", img: "fotos/galeria-volei.jpg", tall: true },
-    { id: 5, title: "Mostra Cultural", category: "Cultura", event: "Mostra Cultural ELO", img: "fotos/galeria-mostra-cultural.jpg", tall: false },
-    { id: 6, title: "Feira de Sustentabilidade", category: "Meio Ambiente", event: "Feira de Sustentabilidade", img: "fotos/galeria-sustentabilidade.jpg", tall: false },
-    { id: 7, title: "Palestra Saúde Mental", category: "Institucional", event: "Palestra: Saúde Mental", img: "fotos/galeria-palestra.jpg", tall: true },
-    { id: 8, title: "Torcida organizada", category: "Esporte", event: "Interclasse 2027", img: "fotos/galeria-torcida.jpg", tall: false }
-  ];
-
-  global.ELO_DATA = { NEWS, EVENTS, PROPOSALS, MEMBERS, GALLERY, img };
-})(window);
-
-</script>
-<script>
-/* ============================================================
    GRÊMIO ESTUDANTIL ELO — App (router + páginas + interações)
    Front-end estático conectado ao Supabase: Auth + Database.
    O conteúdo público e o painel administrativo usam dados reais.
@@ -1396,10 +1266,13 @@ const MEMBERS = [
      HELPERS
      --------------------------------------------------------- */
   function fmtDate(iso) {
+    if (!iso) return "";
     const d = new Date(iso + "T12:00:00");
+    if (isNaN(d)) return "";
     return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
   }
   function fmtDateShort(iso) {
+    if (!iso || isNaN(new Date(iso + "T12:00:00"))) return { day: "", mon: "" };
     const d = new Date(iso + "T12:00:00");
     return { day: d.toLocaleDateString("pt-BR", { day: "2-digit" }), mon: d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "").toUpperCase() };
   }
@@ -1409,7 +1282,7 @@ const MEMBERS = [
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
   function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
   function icon(name, size) {
     size = size || 20;
@@ -1580,7 +1453,7 @@ const MEMBERS = [
     return `
     <article class="card reveal" style="--stagger:${i || 0}">
       <a href="#/noticias/${n.slug}" data-link class="card-media">
-        <img src="${n.cover}" alt="" loading="lazy">
+        <img src="${escapeHtml(n.cover)}" alt="" loading="lazy">
         <span class="pill pill-vinho">${escapeHtml(n.category)}</span>
       </a>
       <div class="card-body">
@@ -1686,7 +1559,7 @@ const MEMBERS = [
           <div class="gallery-track" id="homeGalleryTrack">
             ${gallery.map((g, i) => `
               <div class="gallery-thumb reveal" style="--stagger:${i % 6}" data-lightbox-trigger data-gallery-index="${i}">
-                <img src="${g.img}" alt="${escapeHtml(g.title)}" loading="lazy">
+                <img src="${escapeHtml(g.img)}" alt="${escapeHtml(g.title)}" loading="lazy">
               </div>`).join("")}
           </div>
           <div class="gallery-strip-nav">
@@ -1713,14 +1586,13 @@ const MEMBERS = [
     <section class="page-hero"><div class="container crumb">${breadcrumb("Integrantes")}<p>Conheça quem representa os estudantes no Grêmio ELO.</p></div></section>
     <section class="section">
       <div class="container">
-        <div class="section-note">${icon("info",18)}<span>Esta página usa fotografias e nomes de demonstração. Nenhuma informação real sobre integrantes foi inventada — os espaços estão identificados como exemplo e podem ser preenchidos pela administração da escola.</span></div>
         <div class="filter-bar" id="memberFilters">
           ${depts.map(d => `<button type="button" class="filter-chip ${d === active ? "active" : ""}" data-dept="${escapeHtml(d)}">${escapeHtml(d)}</button>`).join("")}
         </div>
         <div class="members-grid">
           ${list.map((m, i) => `
           <div class="member-card reveal" style="--stagger:${i % 6}">
-            <div class="member-photo"><img src="${m.img}" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"><span class="demo-tag pill pill-gold" style="position:relative">Exemplo</span></div>
+            <div class="member-photo"><img src="${escapeHtml(m.img)}" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"></div>
             <div class="member-info">
               <strong>${escapeHtml(m.name)}</strong>
               <span class="role">${escapeHtml(m.role)}</span>
@@ -1774,7 +1646,7 @@ const MEMBERS = [
       <div class="container article-layout">
         <div>
           <a href="#/noticias" data-link class="back-link">${icon("arrow",16)} Voltar para notícias</a>
-          <div class="article-hero-img"><img src="${n.cover}" alt=""></div>
+          <div class="article-hero-img"><img src="${escapeHtml(n.cover)}" alt=""></div>
           <div class="article-body">
             <span class="pill pill-vinho">${escapeHtml(n.category)}</span>
             <h1 style="margin-top:.8rem">${escapeHtml(n.title)}</h1>
@@ -1791,7 +1663,7 @@ const MEMBERS = [
             <h4>Outras notícias</h4>
             ${related.map(r => `
               <a href="#/noticias/${r.slug}" data-link class="sidebar-related">
-                <img src="${r.cover}" alt="">
+                <img src="${escapeHtml(r.cover)}" alt="">
                 <div><strong>${escapeHtml(r.title)}</strong></div>
               </a>`).join("")}
           </div>
@@ -1818,7 +1690,6 @@ const MEMBERS = [
     <section class="page-hero"><div class="container crumb">${breadcrumb("Propostas")}<p>Acompanhe os projetos e propostas em desenvolvimento pela gestão do Grêmio.</p></div></section>
     <section class="section">
       <div class="container">
-        <div class="section-note">${icon("info",18)}<span>Os percentuais de progresso exibidos abaixo são dados demonstrativos, usados apenas para ilustrar o layout da página.</span></div>
         <div class="filter-bar" id="proposalFilters">
           ${statuses.map(s => `<button type="button" class="filter-chip ${s === active ? "active" : ""}" data-status="${s}">${s === "todos" ? "Todos" : statusLabel(s)}</button>`).join("")}
         </div>
@@ -1939,7 +1810,7 @@ const MEMBERS = [
         <div class="masonry" id="masonryGrid">
           ${list.map((g, i) => `
           <div class="masonry-item reveal" style="--stagger:${i % 6}" data-lightbox-trigger data-gallery-index="${i}">
-            <img src="${g.img}" alt="${escapeHtml(g.title)}" loading="lazy" style="${g.tall ? "aspect-ratio:3/4.2;object-fit:cover" : ""}">
+            <img src="${escapeHtml(g.img)}" alt="${escapeHtml(g.title)}" loading="lazy" style="${g.tall ? "aspect-ratio:3/4.2;object-fit:cover" : ""}">
             <div class="masonry-overlay"><span>${escapeHtml(g.title)} · ${escapeHtml(g.event)}</span></div>
           </div>`).join("") || `<div class="empty-state">${icon("photo",40)}<p>Nenhuma foto nessa categoria.</p></div>`}
         </div>
@@ -2234,7 +2105,7 @@ const MEMBERS = [
         if (!ev) return;
         $("#eventModalTitle").textContent = ev.title;
         $("#eventModalBody").innerHTML = `
-          <img src="${ev.cover}" alt="" style="width:100%;border-radius:12px;margin-bottom:1rem;aspect-ratio:16/9;object-fit:cover">
+          <img src="${escapeHtml(ev.cover)}" alt="" style="width:100%;border-radius:12px;margin-bottom:1rem;aspect-ratio:16/9;object-fit:cover">
           <p style="color:var(--text-soft);margin-bottom:.8rem">${escapeHtml(ev.desc)}</p>
           <p style="font-size:.88rem;display:flex;gap:.5rem;align-items:center;margin-bottom:.4rem">${icon("calendar",15)} ${fmtDate(ev.date)}</p>
           <p style="font-size:.88rem;display:flex;gap:.5rem;align-items:center">${icon("pin",15)} ${escapeHtml(ev.place)}</p>
@@ -2354,6 +2225,12 @@ const MEMBERS = [
   }
 
   function bindAdminTabEvents(tab) {
+    $$("[data-edit]").forEach(b => { b.setAttribute("aria-label", "Editar"); b.title = "Editar"; });
+    $$("[data-del]").forEach(b => { b.setAttribute("aria-label", "Excluir"); b.title = "Excluir"; });
+    $$(".admin-table").forEach(t => {
+      const heads = $$("thead th", t).map(h => h.textContent.trim());
+      $$("tbody tr", t).forEach(tr => $$("td", tr).forEach((td, i) => { if (heads[i] && !td.hasAttribute("colspan")) td.dataset.label = heads[i]; }));
+    });
     const addBtn = $("#adminAddBtn");
     if (addBtn) addBtn.addEventListener("click", () => openAdminModal(tab, null));
     $$("[data-edit]").forEach(b => b.addEventListener("click", () => {
@@ -2436,6 +2313,9 @@ const MEMBERS = [
       finally { saveBtn.disabled=false; saveBtn.textContent="Salvar"; }
     });
   }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") $("#adminModalBackdrop")?.classList.remove("open");
+  });
   document.addEventListener("click", (e) => {
     const backdrop = $("#adminModalBackdrop");
     if (backdrop && (e.target === backdrop || e.target.closest("[data-close-admin-modal]"))) backdrop.classList.remove("open");
@@ -2444,6 +2324,11 @@ const MEMBERS = [
   /* ---------------------------------------------------------
      INIT
      --------------------------------------------------------- */
+  const FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="#ecdfcf"/><g fill="none" stroke="#5E010C" stroke-width="8" opacity=".35" stroke-linejoin="round"><rect x="140" y="110" width="120" height="85" rx="12"/><circle cx="200" cy="152" r="22"/></g></svg>');
+  document.addEventListener("error", (e) => {
+    const t = e.target;
+    if (t && t.tagName === "IMG" && !t.dataset.fallback) { t.dataset.fallback = "1"; t.src = FALLBACK_IMG; }
+  }, true);
   $("#year").textContent = new Date().getFullYear();
   revealObserve(document.querySelector(".site-footer")); // footer lives outside #main, so it needs its own observer
   if (!location.hash) location.hash = "#/";
