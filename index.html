@@ -677,6 +677,10 @@ height: calc(100dvh - var(--header-h));
 .icon-btn:hover{ background: var(--vinho); color:#fff; }
 .icon-btn.danger:hover{ background:#9b2c2c; }
 .admin-logout{ margin-left:auto; }
+.admin-row-actions{ flex-wrap:wrap; }
+.upload-preview[hidden]{ display:none !important; }
+.field input[type="file"]{ padding:.55rem .7rem; font-size:.88rem; cursor:pointer; }
+.field input[type="file"]::file-selector-button{ background:var(--vinho); color:#fff; border:0; border-radius:999px; padding:.55rem 1rem; margin-right:.8rem; font-weight:700; cursor:pointer; }
 
 /* Responsividade do painel admin */
 .admin-layout > *{ min-width:0; }
@@ -849,7 +853,7 @@ html{scroll-behavior:smooth;}
 .filter-chip:hover{transform:translateY(-2px);}
 .social-icons a:hover{transform:translateY(-4px) rotate(7deg) scale(1.06);}
 .page-enter{animation:eloPageEnter .65s cubic-bezier(.2,.75,.25,1) both;}
-@keyframes eloPageEnter{from{opacity:0;transform:translateY(15px) scale(.995);filter:blur(3px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes eloPageEnter{from{opacity:0;transform:translateY(15px) scale(.995);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
 .toast{backdrop-filter:blur(12px);}
 .modal{animation:eloModalIn .35s cubic-bezier(.2,.8,.2,1) both;}
 @keyframes eloModalIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
@@ -867,11 +871,11 @@ html{scroll-behavior:smooth;}
 @keyframes eloRevealUp {
   0% { opacity: 0; transform: translate3d(0, 42px, 0) scale(.97); filter: blur(7px); }
   70% { opacity: 1; filter: blur(0); }
-  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+  100% { opacity: 1; transform: none; filter: none; }
 }
 @keyframes eloRevealSide {
   0% { opacity: 0; transform: translate3d(-42px, 0, 0); filter: blur(5px); }
-  100% { opacity: 1; transform: none; filter: blur(0); }
+  100% { opacity: 1; transform: none; filter: none; }
 }
 @keyframes eloSoftPulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(195,156,119,0); }
@@ -1179,7 +1183,10 @@ html{scroll-behavior:smooth;}
   function getNews(){ return DATA.news; }
   function getEvents(){ return DATA.events.slice().sort((a,b)=>String(a.date||"").localeCompare(String(b.date||""))); }
   function getProposals(){ return DATA.proposals; }
-  function getMembers(){ return DATA.members; }
+  function getMembers(){
+    return DATA.members.slice().sort((a, b) =>
+      ((a.sort_order ?? 1e9) - (b.sort_order ?? 1e9)) || String(a.id).localeCompare(String(b.id), undefined, { numeric: true }));
+  }
   function getGallery(){ return DATA.gallery; }
 
   async function checkIsAdmin(userId) {
@@ -1207,14 +1214,58 @@ html{scroll-behavior:smooth;}
   async function saveRecord(collection,item) {
     const table=TABLES[collection];
     if(!table) throw new Error("Tabela inválida.");
+    const key=collection==="news"?"slug":"id";
     const payload={...item};
     delete payload.demo;
-    const {data,error}=await supabase.from(table).upsert(payload).select().single();
+    const isEdit = payload[key]!=null && DATA[collection].some(x=>String(x[key])===String(payload[key]));
+    if (collection==="members" && !isEdit && payload.sort_order==null) {
+      payload.sort_order = DATA.members.reduce((mx,m)=>Math.max(mx, Number(m.sort_order)||0), 0) + 1;
+    }
+    const run = (pl) => {
+      if (isEdit) { const kv = pl[key]; if (key==="id") delete pl.id; return supabase.from(table).update(pl).eq(key,kv).select().single(); }
+      return supabase.from(table).insert(pl).select().single();
+    };
+    let {data,error} = await run({...payload});
+    if (error && /sort_order/.test(error.message||"") && "sort_order" in payload) {
+      delete payload.sort_order;
+      ({data,error} = await run({...payload}));
+    }
     if(error) throw error;
-    const key=collection==="news"?"slug":"id";
     const idx=DATA[collection].findIndex(x=>String(x[key])===String(data[key]));
     if(idx>=0) DATA[collection][idx]=data; else DATA[collection].push(data);
     return data;
+  }
+
+  /* Ordem dos integrantes (coluna sort_order na tabela members) */
+  const MOVE_ICONS = {
+    first: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 4h12M12 20V9M6 14l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 19V6M6 12l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    down: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v13M6 12l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  function moveButtons(coll, id) {
+    return [["first","Mover para o início"],["up","Subir"],["down","Descer"]]
+      .map(([d,t]) => `<button class="icon-btn" data-move="${coll}:${id}:${d}" aria-label="${t}" title="${t}">${MOVE_ICONS[d]}</button>`).join("");
+  }
+  async function moveMember(id, dir) {
+    const list = getMembers();
+    const i = list.findIndex(m => String(m.id) === String(id));
+    if (i < 0) return false;
+    let ordered;
+    if (dir === "first") { if (i === 0) return false; ordered = [list[i], ...list.filter((_, k) => k !== i)]; }
+    else {
+      const j = dir === "up" ? i - 1 : i + 1;
+      if (j < 0 || j >= list.length) return false;
+      ordered = list.slice(); [ordered[i], ordered[j]] = [ordered[j], ordered[i]];
+    }
+    const changes = ordered.map((m, k) => ({ m, pos: k + 1 })).filter(({ m, pos }) => m.sort_order !== pos);
+    const results = await Promise.all(changes.map(({ m, pos }) => supabase.from("members").update({ sort_order: pos }).eq("id", m.id)));
+    const failed = results.find(r => r.error);
+    if (failed) {
+      if (/sort_order/.test(failed.error.message || "")) throw new Error("Falta criar a coluna de ordem no Supabase (rode o SQL da ordem dos integrantes).");
+      throw failed.error;
+    }
+    changes.forEach(({ m, pos }) => { m.sort_order = pos; });
+    return true;
   }
   async function deleteRecord(collection,id) {
     const table=TABLES[collection], key=collection==="news"?"slug":"id";
@@ -1985,7 +2036,7 @@ html{scroll-behavior:smooth;}
       <td><div class="admin-row-actions"><button class="icon-btn" data-edit="gallery:${g.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="gallery:${g.id}">${icon("trash")}</button></div></td></tr>`).join("");
     if (tab === "members") rows = getMembers().map(m => `
       <tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${escapeHtml(m.role)}</td><td>${escapeHtml(m.dept)}</td>
-      <td><div class="admin-row-actions"><button class="icon-btn" data-edit="members:${m.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="members:${m.id}">${icon("trash")}</button></div></td></tr>`).join("");
+      <td><div class="admin-row-actions">${moveButtons("members", m.id)}<button class="icon-btn" data-edit="members:${m.id}">${icon("edit")}</button><button class="icon-btn danger" data-del="members:${m.id}">${icon("trash")}</button></div></td></tr>`).join("");
     if (tab === "submissions") {
       const subs = DATA.submissions || [];
       rows = subs.map(s => `
@@ -2225,6 +2276,16 @@ html{scroll-behavior:smooth;}
   }
 
   function bindAdminTabEvents(tab) {
+    $$("[data-move]").forEach(b => b.addEventListener("click", async () => {
+      const [coll, id, dir] = b.dataset.move.split(":");
+      b.disabled = true;
+      try {
+        const changed = await moveMember(id, dir);
+        $("#adminPanelBody").innerHTML = renderAdminTabBody(coll);
+        bindAdminTabEvents(coll);
+        if (changed) toast("Ordem atualizada.");
+      } catch (err) { dbError(err, "Não foi possível mudar a ordem"); b.disabled = false; }
+    }));
     $$("[data-edit]").forEach(b => { b.setAttribute("aria-label", "Editar"); b.title = "Editar"; });
     $$("[data-del]").forEach(b => { b.setAttribute("aria-label", "Excluir"); b.title = "Excluir"; });
     $$(".admin-table").forEach(t => {
@@ -2259,6 +2320,10 @@ html{scroll-behavior:smooth;}
   };
   function openAdminModal(coll, item) {
     const backdrop = $("#adminModalBackdrop");
+    if (backdrop.parentElement !== document.body) {
+      $$("body > #adminModalBackdrop").forEach(x => { if (x !== backdrop) x.remove(); });
+      document.body.appendChild(backdrop);
+    }
     const fields = FORM_FIELDS[coll];
     $("#adminModalTitle").textContent = item ? "Editar item" : "Adicionar item";
     $("#adminModalBody").innerHTML = `
@@ -2268,7 +2333,7 @@ html{scroll-behavior:smooth;}
           if (IMG_FIELDS.includes(name)) {
             const cur = String(val || ""), has = cur && !/adicione-/.test(cur);
             return `<div class="field"><label>${name === "cover" ? "Foto de capa" : "Foto"}</label>
-              <img class="upload-preview" src="${has ? escapeHtml(cur) : ""}" alt="" ${has ? "" : "hidden"} style="max-width:100%;max-height:220px;object-fit:cover;border-radius:12px">
+              <img class="upload-preview" ${has ? `src="${escapeHtml(cur)}"` : "hidden"} alt="" style="max-width:100%;max-height:220px;object-fit:cover;border-radius:12px">
               <input type="file" name="file_${name}" accept="image/*">
               <span class="hint">Escolha uma foto do celular ou computador. Ela é enviada sozinha ao salvar.</span>
               <input name="${name}" type="text" placeholder="Ou cole um link de imagem (opcional)" value="${has ? escapeHtml(cur) : ""}"></div>`;
@@ -2327,7 +2392,7 @@ html{scroll-behavior:smooth;}
   const FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="#ecdfcf"/><g fill="none" stroke="#5E010C" stroke-width="8" opacity=".35" stroke-linejoin="round"><rect x="140" y="110" width="120" height="85" rx="12"/><circle cx="200" cy="152" r="22"/></g></svg>');
   document.addEventListener("error", (e) => {
     const t = e.target;
-    if (t && t.tagName === "IMG" && !t.dataset.fallback) { t.dataset.fallback = "1"; t.src = FALLBACK_IMG; }
+    if (t && t.tagName === "IMG" && t.getAttribute("src") && !t.dataset.fallback) { t.dataset.fallback = "1"; t.src = FALLBACK_IMG; }
   }, true);
   $("#year").textContent = new Date().getFullYear();
   revealObserve(document.querySelector(".site-footer")); // footer lives outside #main, so it needs its own observer
