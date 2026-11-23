@@ -1354,6 +1354,45 @@ const MEMBERS = [
   }
 
   /* ---------------------------------------------------------
+     UPLOAD DE FOTOS (Supabase Storage, bucket público "fotos")
+     --------------------------------------------------------- */
+  const BUCKET = "fotos";
+  const IMG_FIELDS = ["cover", "img"];
+  const IMG_PLACEHOLDER = {
+    news: "fotos/adicione-capa-noticia.jpg",
+    events: "fotos/adicione-capa-evento.jpg",
+    gallery: "fotos/adicione-foto-galeria.jpg",
+    members: "fotos/adicione-foto-integrante.jpg"
+  };
+  function compressImage(file, max = 1600, quality = 0.85) {
+    return new Promise(resolve => {
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return resolve(file);
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        const r = Math.min(1, max / Math.max(img.width, img.height));
+        const w = Math.round(img.width * r), h = Math.round(img.height * r);
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        c.toBlob(b => resolve(b || file), "image/jpeg", quality);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+  async function uploadImage(file, folder) {
+    if (file.size > 15 * 1024 * 1024) throw new Error("A foto é grande demais (máximo 15 MB).");
+    const blob = await compressImage(file);
+    const ext = blob.type === "image/jpeg" ? "jpg" : ((file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg");
+    const path = folder + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + ext;
+    const { error } = await supabase.storage.from(BUCKET).upload(path, blob, { contentType: blob.type || file.type, cacheControl: "31536000", upsert: false });
+    if (error) throw error;
+    return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  }
+
+  /* ---------------------------------------------------------
      HELPERS
      --------------------------------------------------------- */
   function fmtDate(iso) {
@@ -2349,14 +2388,26 @@ const MEMBERS = [
       <form id="adminItemForm">
         ${fields.map(([name, label, type, options]) => {
           const val = item ? (item[name] ?? "") : "";
+          if (IMG_FIELDS.includes(name)) {
+            const cur = String(val || ""), has = cur && !/adicione-/.test(cur);
+            return `<div class="field"><label>${name === "cover" ? "Foto de capa" : "Foto"}</label>
+              <img class="upload-preview" src="${has ? escapeHtml(cur) : ""}" alt="" ${has ? "" : "hidden"} style="max-width:100%;max-height:220px;object-fit:cover;border-radius:12px">
+              <input type="file" name="file_${name}" accept="image/*">
+              <span class="hint">Escolha uma foto do celular ou computador. Ela é enviada sozinha ao salvar.</span>
+              <input name="${name}" type="text" placeholder="Ou cole um link de imagem (opcional)" value="${has ? escapeHtml(cur) : ""}"></div>`;
+          }
           if (type === "textarea") return `<div class="field"><label>${label}</label><textarea name="${name}">${escapeHtml(val)}</textarea></div>`;
           if (type === "select") return `<div class="field"><label>${label}</label><select name="${name}">${options.map(o => `<option value="${o}" ${val === o ? "selected" : ""}>${statusLabel(o)}</option>`).join("")}</select></div>`;
           return `<div class="field"><label>${label}</label><input name="${name}" type="${type || "text"}" value="${escapeHtml(val)}"></div>`;
         }).join("")}
-        <div class="demo-banner" style="margin-top:1rem">${icon("info",16)} Imagens/fotos reais exigem upload para um armazenamento real (ex.: Supabase Storage) — aqui, novos itens usam uma imagem ilustrativa automática.</div>
+        <div class="demo-banner" style="margin-top:1rem">${icon("info",16)} As fotos são enviadas para o Supabase Storage e aparecem no site assim que você salva.</div>
         <div class="form-actions"><button type="submit" class="btn btn-secondary">Salvar</button></div>
       </form>`;
     backdrop.classList.add("open");
+    $$('input[type="file"][name^="file_"]', backdrop).forEach(inp => inp.addEventListener("change", () => {
+      const f = inp.files && inp.files[0], pv = inp.closest(".field").querySelector(".upload-preview");
+      if (f && pv) { pv.src = URL.createObjectURL(f); pv.hidden = false; }
+    }));
     $("#adminItemForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
@@ -2367,15 +2418,16 @@ const MEMBERS = [
         obj.slug = item?.slug || (obj.title || "noticia").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") + "-" + Date.now();
         obj.body = String(obj.body || obj.excerpt || "").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
       }
-      if (!item) {
-        if (coll === "news") { obj.slug = (obj.title || "nova-noticia").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-" + obj.id; obj.cover = "fotos/adicione-capa-noticia.jpg"; obj.body = [obj.excerpt || ""]; } // coloque a imagem em /fotos/
-        if (coll === "events") obj.cover = "fotos/adicione-capa-evento.jpg"; // coloque a imagem em /fotos/
-        if (coll === "gallery") { obj.img = "fotos/adicione-foto-galeria.jpg"; obj.tall = false; }
-        if (coll === "members") obj.img = "fotos/adicione-foto-integrante.jpg";
-      }
       const saveBtn=e.target.querySelector('button[type="submit"]');
       saveBtn.disabled=true; saveBtn.textContent="Salvando...";
       try {
+        for (const name of fields.map(f => f[0]).filter(n => IMG_FIELDS.includes(n))) {
+          const file = fd.get("file_" + name);
+          if (file && file.size) { saveBtn.textContent = "Enviando foto..."; obj[name] = await uploadImage(file, coll); }
+          else if (!String(obj[name] || "").trim()) obj[name] = item?.[name] || IMG_PLACEHOLDER[coll];
+        }
+        if (!item && coll === "gallery") obj.tall = false;
+        saveBtn.textContent = "Salvando...";
         await saveRecord(coll,obj);
         backdrop.classList.remove("open");
         $("#adminPanelBody").innerHTML=renderAdminTabBody(coll);
